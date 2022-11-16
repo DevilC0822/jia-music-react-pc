@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom'
 const MainLayout = lazy(() => import('@/layout'))
 const Home = lazy(() => import('@/views/Home'))
 const Explore = lazy(() => import('@/views/Explore'))
+const Search = lazy(() => import('@/views/Search'))
 const NotFound = lazy(() => import('@/views/NotFound'))
 
 const routes = [
@@ -28,6 +29,14 @@ const routes = [
         element: (
           <Suspense>
             <Explore />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'search/:keywords',
+        element: (
+          <Suspense>
+            <Search />
           </Suspense>
         ),
       },

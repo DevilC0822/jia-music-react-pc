@@ -3,14 +3,17 @@ import { Layout, Nav, Button, Avatar } from '@douyinfe/semi-ui'
 import { Outlet, useNavigate } from 'react-router-dom'
 import {
   IconSemiLogo,
+  IconChevronLeft,
+  IconChevronRight,
   IconBell,
-  IconHelpCircle,
+  IconGithubLogo,
   IconHome,
   // IconMoon,
   // IconSun,
   IconGridView,
   IconMusic,
 } from '@douyinfe/semi-icons'
+import HeaderSearch from '@/components/HeaderSearch'
 import styles from './index.module.css'
 
 const MainLayout = () => {
@@ -30,11 +33,22 @@ const MainLayout = () => {
 
   return (
     <Layout>
-      <Header className={styles.card}>
+      <Header>
         <div>
           <Nav mode="horizontal" defaultSelectedKeys={['Home']}>
             <Nav.Header>
-              <IconSemiLogo style={{ fontSize: 36 }} />
+              <Nav.Item
+                onClick={() => navigate(-1)}
+                itemKey="back"
+                icon={<IconChevronLeft size="large" />}
+                style={{ margin: 0 }}
+              />
+              <Nav.Item
+                onClick={() => navigate(1)}
+                itemKey="forward"
+                icon={<IconChevronRight size="large" />}
+                style={{ margin: 0 }}
+              />
             </Nav.Header>
             <Nav.Item onClick={() => navigate('/home')} itemKey="Home" text="首页" icon={<IconHome size="large" />} />
             <Nav.Item
@@ -45,6 +59,7 @@ const MainLayout = () => {
             />
             <Nav.Item itemKey="Setting" text="音乐库" icon={<IconMusic size="large" />} />
             <Nav.Footer>
+              <HeaderSearch></HeaderSearch>
               {/* 白天与黑暗模式切换 */}
               {/*<div>*/}
               {/*  {themeName === 'light' && (*/}
@@ -84,29 +99,23 @@ const MainLayout = () => {
               />
               <Button
                 theme="borderless"
-                icon={<IconHelpCircle size="large" />}
+                icon={<IconGithubLogo size="large" />}
                 style={{
                   color: 'var(--semi-color-text-2)',
                   marginRight: '12px',
                 }}
+                onClick={() => {
+                  window.open('https://github.com/DevilC0822/jia-music-react-pc')
+                }}
               />
-              <Avatar color="orange" size="small">
-                NK
+              <Avatar color="orange" size="small" style={{ flexShrink: 0 }}>
+                login
               </Avatar>
             </Nav.Footer>
           </Nav>
         </div>
       </Header>
-      <Content
-        style={{
-          backgroundColor: 'var(--semi-color-bg-0)',
-          boxSizing: 'border-box',
-          minHeight: 'calc(120vh - 60px)',
-          background: '#f5f5f5',
-          overflow: 'hidden',
-          padding: '60px 10vw 40px',
-        }}
-      >
+      <Content className={styles.MainContent}>
         {/*<Breadcrumb*/}
         {/*  style={{*/}
         {/*    marginBottom: '24px',*/}
