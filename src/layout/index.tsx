@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { Layout, Nav, Button, Avatar } from '@douyinfe/semi-ui'
+import React, {useEffect, useState} from 'react'
+import { Layout, Nav, Button, Avatar, Dropdown, Toast } from '@douyinfe/semi-ui'
 import { Outlet, useNavigate } from 'react-router-dom'
+import useLogin from '@/hooks/useLogin'
 import {
   IconSemiLogo,
   IconChevronLeft,
@@ -14,11 +15,36 @@ import {
   IconMusic,
 } from '@douyinfe/semi-icons'
 import HeaderSearch from '@/components/HeaderSearch'
+import LoginModal from '@/components/LoginModal'
 import styles from './index.module.css'
+
+export const UserContext = React.createContext({
+  loginStatus: false
+})
 
 const MainLayout = () => {
   const navigate = useNavigate()
   const { Header, Content } = Layout
+  const { getLoginStatus, logout } = useLogin()
+  const [loginStatus, setLoginStatus] = useState(false)
+  const [loginModalVisible, setLoginModalVisible] = useState(false)
+
+  const updateLoginStatus = async () => {
+    const res = await getLoginStatus()
+    setLoginStatus(res as boolean)
+  }
+
+  const logoutClick = async () => {
+    await logout()
+    setLoginStatus(false)
+    Toast.success('退出登录成功')
+  }
+  useEffect(() => {
+    (async () => {
+      await updateLoginStatus()
+    })()
+  }, [])
+
   // const [themeName, setThemeName] = useState('light')
   // const switchMode = () => {
   //   const body = document.body
@@ -108,9 +134,36 @@ const MainLayout = () => {
                   window.open('https://github.com/DevilC0822/jia-music-react-pc')
                 }}
               />
-              <Avatar color="orange" size="small" style={{ flexShrink: 0 }}>
-                login
-              </Avatar>
+              {
+                !loginStatus &&
+                <Avatar
+                  color="orange"
+                  size="small"
+                  style={{ flexShrink: 0 }}
+                  onClick={() => {
+                  setLoginModalVisible(true)
+                }}>
+                  login
+                </Avatar>
+              }
+              {
+                loginStatus &&
+                <Dropdown
+                  trigger={'hover'}
+                  position={'bottomLeft'}
+                  render={
+                    <Dropdown.Menu>
+                      <Dropdown.Item onClick={logoutClick}>退出登录</Dropdown.Item>
+                    </Dropdown.Menu>
+                  }
+                >
+                  <Avatar
+                    size="small"
+                    style={{ flexShrink: 0 }}
+                    src={JSON.parse(window.localStorage.getItem('profile') as string).avatarUrl}
+                  ></Avatar>
+                </Dropdown>
+              }
             </Nav.Footer>
           </Nav>
         </div>
@@ -135,7 +188,12 @@ const MainLayout = () => {
         {/*    <p>Hi, Bytedance dance dance.</p>*/}
         {/*  </Skeleton>*/}
         {/*</div>*/}
-        <Outlet />
+        <UserContext.Provider value={{
+          loginStatus: loginStatus
+        }}>
+          <Outlet />
+        </UserContext.Provider>
+
       </Content>
       {/*<Footer*/}
       {/*  style={{*/}
@@ -160,6 +218,7 @@ const MainLayout = () => {
       {/*    <span>反馈建议</span>*/}
       {/*  </span>*/}
       {/*</Footer>*/}
+      <LoginModal loginModalVisible={loginModalVisible} setLoginModalVisible={setLoginModalVisible}></LoginModal>
     </Layout>
   )
 }

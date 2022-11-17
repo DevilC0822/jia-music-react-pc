@@ -10,7 +10,7 @@ export default defineConfig({
     },
   },
   server: {
-    host: '0.0.0.2',
+    host: '0.0.0.0',
     port: 5173,
     open: true,
     https: false,
@@ -19,7 +19,7 @@ export default defineConfig({
       '^/api': {
         target: 'http://175.24.198.84:3000/', // 后端服务实际地址
         changeOrigin: true, //开启代理
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: path => path.replace(/^\/api/, ''),
       },
     },
   },

@@ -10,13 +10,8 @@ axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
 axios.interceptors.request.use(
   (config): AxiosRequestConfig<any> => {
-    const token = window.localStorage.getItem('token')
-    // const cookie = window.localStorage.getItem('cookie')
-    if (token) {
-      config.headers!.token = token
-    }
     config.params = {
-      realIP: '116.25.146.177',
+      // realIP: '116.25.146.177',
       timerstamp: Date.parse(new Date().toString()) / 1000,
       ...config.params,
     }

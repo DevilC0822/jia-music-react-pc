@@ -1,8 +1,7 @@
-.customDropdown {
-    top: 5px;
-    left: -30px;
-}
-
 .htoKeywordsListBox {
     display: flex;
+}
+
+:global(.semi-dropdown-item) {
+    max-width: initial;
 }

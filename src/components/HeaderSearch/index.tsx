@@ -68,7 +68,7 @@ const HeaderSearch = memo(() => {
             }}
           >
             <div className={styles.htoKeywordsListBox}>
-              <p style={{ marginRight: 10 }}>{item.name}</p>
+              <p style={{ marginRight: 10, whiteSpace: 'nowrap' }}>{item.name}</p>
               <Tag color="light-blue" size="small">
                 {item.desc}
               </Tag>
@@ -91,15 +91,16 @@ const HeaderSearch = memo(() => {
     <>
       <Dropdown
         className={styles.customDropdown}
-        style={{ width: 300 }}
-        trigger={'focus'}
         position={'bottomLeft'}
+        trigger={'focus'}
+        spacing={10}
         clickToHide={true}
         render={hotSearchKeywordsListRender()}
       >
         <Input
           placeholder={showKeywords}
-          prefix={<IconSearch />}
+          suffix={<IconSearch />}
+          showClear
           value={keywords}
           onChange={keywordsInputChange}
           onEnterPress={() => search()}
