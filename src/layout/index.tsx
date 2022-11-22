@@ -3,7 +3,6 @@ import { Layout, Nav, Button, Avatar, Dropdown, Toast } from '@douyinfe/semi-ui'
 import { Outlet, useNavigate } from 'react-router-dom'
 import useLogin from '@/hooks/useLogin'
 import {
-  IconSemiLogo,
   IconChevronLeft,
   IconChevronRight,
   IconBell,
@@ -29,9 +28,10 @@ const MainLayout = () => {
   const [loginStatus, setLoginStatus] = useState(false)
   const [loginModalVisible, setLoginModalVisible] = useState(false)
 
-  const updateLoginStatus = async () => {
-    const res = await getLoginStatus()
-    setLoginStatus(res as boolean)
+  const updateLoginStatus = () => {
+    getLoginStatus().then(res => {
+      setLoginStatus(res as boolean)
+    })
   }
 
   const logoutClick = async () => {
@@ -40,9 +40,7 @@ const MainLayout = () => {
     Toast.success('退出登录成功')
   }
   useEffect(() => {
-    (async () => {
-      await updateLoginStatus()
-    })()
+    updateLoginStatus()
   }, [])
 
   // const [themeName, setThemeName] = useState('light')
@@ -218,7 +216,11 @@ const MainLayout = () => {
       {/*    <span>反馈建议</span>*/}
       {/*  </span>*/}
       {/*</Footer>*/}
-      <LoginModal loginModalVisible={loginModalVisible} setLoginModalVisible={setLoginModalVisible}></LoginModal>
+      <LoginModal
+        loginModalVisible={loginModalVisible}
+        setLoginModalVisible={setLoginModalVisible}
+        updateLoginStatus={updateLoginStatus}
+      ></LoginModal>
     </Layout>
   )
 }

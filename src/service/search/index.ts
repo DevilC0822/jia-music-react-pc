@@ -3,7 +3,7 @@ import type * as T from './types'
 
 // 搜索歌曲
 export const search = (params: T.ISearch) => {
-  return service.post('/search', params)
+  return service.post('/cloudsearch', params)
 }
 
 // 默认搜索关键词

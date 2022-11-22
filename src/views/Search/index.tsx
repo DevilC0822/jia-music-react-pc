@@ -1,24 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import searchApi from '@/service/search'
-import { List, Avatar, Spin, Toast, Tag } from '@douyinfe/semi-ui'
+import { List, Avatar, Toast, Tag } from '@douyinfe/semi-ui'
 import InfiniteScroll from 'react-infinite-scroller'
-import useSongId from '@/hooks/useSongId'
+import useLogin from '@/hooks/useLogin'
 import { artistsShow } from '@/utils'
 import styles from './index.module.css'
 import type * as T from '@/types/song'
 
 // 天然闭包环境
-let offset = 0
 let limit = 30
-const loginStatus = false
 
 function Search() {
   const params = useParams()
-  const { getSongDetail } = useSongId()
+  const { getLoginStatus } = useLogin()
   const [songList, setSongList] = useState<T.ISong[]>([])
   const [loading, setLading] = useState(false)
   const [hasMore, setHasMore] = useState(false)
+  const [loginStatus, setLoginStatus] = useState(false)
 
   const FeeRender = (Props: { feeVal: number | undefined }) => {
     const { feeVal } = Props
@@ -53,36 +52,47 @@ function Search() {
     return <></>
   }
 
-  const search = async (limit = 30, offset = 0) => {
+  const search = (limit = 30, offset = 0) => {
     if (limit + offset > 80 && !loginStatus) {
       return Toast.warning('未登录, 无法加载更多')
     }
     setLading(true)
-    const idsRes = await searchApi.search({
+    searchApi.search({
       keywords: params.keywords as string,
       limit,
       offset,
+    }).then(res => {
+      if (res.code !== 200) {
+        Toast.error(res.message)
+        setLading(false)
+        return
+      }
+      const songInfo: T.ISong[] = []
+      ;(res as any).result.songs.map((item: any) => {
+        const result: T.ISong = {}
+        result.songName = item.name
+        result.songAlias = item.alia && item.alia[0]
+        result.songId = item.id
+        result.albumName = item.al && item.al.name
+        result.picUrl = item.al && item.al.picUrl
+        result.albumId = item.al && item.al.id
+        result.songArtists = artistsShow(item.ar)
+        result.fee = item.fee
+        songInfo.push(result)
+      })
+      setSongList(songInfo)
+      setHasMore(res.result.songCount > limit)
+      setLading(false)
     })
-    const ids = idsRes.result.songs.map((item: { id: string }) => item.id).join(',')
-    const songDetailRes = await getSongDetail(ids)
-    console.log(songDetailRes)
-    const songInfo: T.ISong[] = []
-    ;(songDetailRes as any).songs.map((item: any) => {
-      const result: T.ISong = {}
-      result.songName = item.name
-      result.songAlias = item.alia && item.alia[0]
-      result.songId = item.id
-      result.albumName = item.al && item.al.name
-      result.picUrl = item.al && item.al.picUrl
-      result.albumId = item.al && item.al.id
-      result.songArtists = artistsShow(item.ar)
-      result.fee = item.fee
-      songInfo.push(result)
-    })
-    setSongList(songInfo)
-    setHasMore(idsRes.result.hasMore)
-    setLading(false)
   }
+  const initLoginStatus = () => {
+    getLoginStatus().then(res => {
+      setLoginStatus(res as boolean)
+    })
+  }
+  useEffect(() => {
+    initLoginStatus()
+  }, [])
 
   useEffect(() => {
     search()
@@ -94,7 +104,7 @@ function Search() {
         initialLoad={false}
         pageStart={0}
         threshold={20}
-        loadMore={() => search((limit += 5), (offset += 5))}
+        loadMore={() => search((limit += 5), 0)}
         hasMore={!loading && hasMore}
         useWindow={false}
       >

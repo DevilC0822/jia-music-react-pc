@@ -1,5 +1,6 @@
-import { Form, Toast, Modal, Button, Dropdown } from '@douyinfe/semi-ui'
-import {useState} from 'react'
+import { useEffect, useState } from 'react'
+import { Form, Toast, Modal, Button, Dropdown, ButtonGroup, useFormApi, Image } from '@douyinfe/semi-ui'
+import { IconRefresh } from '@douyinfe/semi-icons'
 import useLogin from '@/hooks/useLogin'
 
 interface ILoginVal {
@@ -12,34 +13,125 @@ interface ILoginVal {
 interface IProps {
   loginModalVisible: boolean
   setLoginModalVisible: Function
+  updateLoginStatus: Function
 }
 
 const LoginModal = (Props: IProps) => {
-  const { phonePasswordLogin } = useLogin()
-  const { loginModalVisible, setLoginModalVisible } = Props
+  const { phonePasswordLogin, emailPasswordLogin, sentCaptcha, captchaLogin, getQRCode, checkQRCode } = useLogin()
+  const { loginModalVisible, setLoginModalVisible, updateLoginStatus } = Props
   const [loginMethod, setLoginMethod] = useState(0)
+  const [qrCode, setQRCode] = useState('')
+  const [isScanCode, setIsScanCode] = useState(false)
 
-  const loginBtnClick = async (values: ILoginVal) => {
+  const phonePasswordLoginBtnClick = async (values: ILoginVal) => {
     if (!values.phone) {
       Toast.error('请输入手机号')
       return
     }
-    if (!values.phone) {
+    if (!values.password) {
       Toast.error('请输入密码')
       return
     }
-    let res
-    if (values.phone && values.password) {
-      res = await phonePasswordLogin(values.phone, values.password)
+    const res: any = await phonePasswordLogin(values.phone, values.password)
+    if (!res.data) {
+      Toast.error(res.msg)
     }
-    console.log(res)
-    if (res) {
-      Toast.success('登录成功')
-    }
-  }
-  const handleCancel = () => {
+    Toast.success('登录成功')
+    await updateLoginStatus()
     setLoginModalVisible(false)
   }
+  const emailPasswordBtnClick = async (values: ILoginVal) => {
+    if (!values.email) {
+      Toast.error('请输入邮箱')
+      return
+    }
+    if (!values.password) {
+      Toast.error('请输入密码')
+      return
+    }
+    const res: any = await emailPasswordLogin(values.email, values.password)
+    if (!res.data) {
+      Toast.error(res.msg)
+      return
+    }
+    Toast.success('登录成功')
+    await updateLoginStatus()
+    setLoginModalVisible(false)
+  }
+
+  const captchaBtnClick = async (values: ILoginVal) => {
+    if (!values.phone) {
+      Toast.error('请输入手机号')
+      return
+    }
+    if (!values.captcha) {
+      Toast.error('请输入验证码')
+      return
+    }
+    const res: any = await captchaLogin(values.phone, values.captcha)
+    if (!res.data) {
+      Toast.error(res.msg)
+      return
+    }
+    Toast.success('登录成功')
+    await updateLoginStatus()
+    setLoginModalVisible(false)
+  }
+
+  const ComponentUsingFormApi = () => {
+    const formApi = useFormApi()
+
+    const sentCaptchaBtnClick = () => {
+      const phone = formApi.getValue('phone')
+      if (!phone) {
+        Toast.error('手机号不能为空')
+        return
+      }
+      sentCaptcha(phone).then((res: any) => {
+        if (!res.data) {
+          Toast.error(res.msg)
+          return
+        }
+        Toast.success('发送成功')
+      })
+    }
+    return (
+      <Button style={{marginBottom: 12}} onClick={sentCaptchaBtnClick}>发送</Button>
+    )
+  }
+
+  const initQRCode = () =>{
+    getQRCode().then((res: any) => {
+      if (!res.qrImg){
+        Toast.error('二维码获取失败, 请重试')
+        return
+      }
+      setQRCode(res.qrImg)
+      const timer = setInterval(async () => {
+        const statusRes = await checkQRCode(res.qrKey)
+        if ((statusRes as {code: number}).code === 800) {
+          Toast.error('二维码已过期, 请重新获取')
+          clearInterval(timer)
+        }
+        if ((statusRes as {code: number}).code === 802) {
+          setIsScanCode(true)
+        }
+        if ((statusRes as {code: number}).code === 803) {
+          // 这一步会返回cookie
+          clearInterval(timer)
+          Toast.success('授权登录成功')
+          await updateLoginStatus()
+          setLoginModalVisible(false)
+        }
+      }, 1000)
+    })
+  }
+
+  useEffect(() => {
+    if (loginMethod === 2) {
+      initQRCode()
+    }
+  }, [loginMethod])
 
   return (
     <>
@@ -51,7 +143,7 @@ const LoginModal = (Props: IProps) => {
         footer={<></>}
       >
         {
-          loginMethod === 0 && <Form onSubmit={loginBtnClick}>
+          loginMethod === 0 && <Form onSubmit={phonePasswordLoginBtnClick}>
             <Form.InputNumber hideButtons field='phone' label='手机号' style={{ width: '100%' }} placeholder='请输入你的手机号'></Form.InputNumber>
             <Form.Input mode='password' field='password' label='密码' style={{ width: '100%' }} placeholder='输入你的密码'></Form.Input>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -74,9 +166,9 @@ const LoginModal = (Props: IProps) => {
           </Form>
         }
         {
-          loginMethod === 1 && <Form onSubmit={loginBtnClick}>
+          loginMethod === 1 && <Form onSubmit={emailPasswordBtnClick}>
             <Form.Input field='email' label='邮箱' style={{ width: '100%' }} placeholder='请输入你的邮箱'></Form.Input>
-            <Form.Input field='password' label='密码' style={{ width: '100%' }} placeholder='输入你的密码'></Form.Input>
+            <Form.Input mode='password' field='password' label='密码' style={{ width: '100%' }} placeholder='输入你的密码'></Form.Input>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>
                 <span>Or</span>
@@ -98,7 +190,18 @@ const LoginModal = (Props: IProps) => {
         }
         {
           loginMethod === 2 && <>
-            <>二维码</>
+            <div style={{textAlign: 'center'}}>
+              <p>打开网易云app 扫码登录</p>
+              <Image
+                width={200}
+                height={200}
+                src={qrCode}
+                fallback={<IconRefresh style={{ fontSize: 50, cursor: 'pointer' }} onClick={initQRCode} />}
+              />
+              {
+                isScanCode && <p>已扫码，请授权登录</p>
+              }
+            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>
                 <span>Or</span>
@@ -118,9 +221,14 @@ const LoginModal = (Props: IProps) => {
           </>
         }
         {
-          loginMethod === 3 && <Form onSubmit={loginBtnClick}>
-            <Form.InputNumber field='phone' label='手机号' style={{ width: '100%' }} placeholder='请输入你的手机号'></Form.InputNumber>
-            <Form.Input field='captcha' label='验证码' style={{ width: '100%' }} placeholder='输入验证码'></Form.Input>
+          loginMethod === 3 && <Form onSubmit={captchaBtnClick}>
+            <Form.InputNumber hideButtons field='phone' label='手机号' style={{ width: '100%' }} placeholder='请输入你的手机号'></Form.InputNumber>
+            <ButtonGroup style={{justifyContent: 'space-between', alignItems: 'flex-end', width: '100%'}}>
+              <Form.InputNumber hideButtons field='captcha' label='验证码' style={{width: 340}} placeholder='输入验证码'>
+              </Form.InputNumber>
+              <ComponentUsingFormApi></ComponentUsingFormApi>
+            </ButtonGroup>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>
                 <span>Or</span>
