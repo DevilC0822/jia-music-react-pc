@@ -8,20 +8,17 @@ import styles from './index.module.css'
 
 const HeaderSearch = memo(() => {
   const navigate = useNavigate()
-  const [keywords, setKeyword] = useState('')
+  const [keywords, setKeywords] = useState('')
+  const [realKeywords, setRealKeywords] = useState('')
   const [showKeywords, setShowKeywords] = useState('')
   const [hotSearchKeywordsList, setHotSearchKeywordsList] = useState<{ name: string; desc: string }[]>([])
 
   const keywordsInputChange = (value: string) => {
-    setKeyword(value)
+    setKeywords(value)
   }
 
-  const search = (name: string = keywords) => {
-    if (!name) {
-      Toast.warning('请输入搜索关键词')
-    }
-    console.log(name)
-    navigate(`search/${name}`)
+  const search = (name: string) => {
+    navigate(`search/${name ? name : realKeywords}`)
   }
   const getDefaultSearchKeywords = () => {
     searchApi.getDefaultSearchKeywords().then(res => {
@@ -29,7 +26,7 @@ const HeaderSearch = memo(() => {
         Toast.error(res.message)
       }
       setShowKeywords(res.data.showKeyword)
-      setKeyword(res.data.realkeywords)
+      setRealKeywords(res.data.realkeyword)
     })
   }
   const getHotSearchKeywordsList = () => {
@@ -63,7 +60,7 @@ const HeaderSearch = memo(() => {
             key={index}
             type="primary"
             onClick={() => {
-              setKeyword(item.name)
+              setKeywords(item.name)
               search(item.name)
             }}
           >
@@ -106,7 +103,7 @@ const HeaderSearch = memo(() => {
           showClear
           value={keywords}
           onChange={keywordsInputChange}
-          onEnterPress={() => search()}
+          onEnterPress={() => search(keywords)}
         ></Input>
       </Dropdown>
     </>
