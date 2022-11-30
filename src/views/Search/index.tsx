@@ -6,7 +6,7 @@ import InfiniteScroll from 'react-infinite-scroller'
 import useLogin from '@/hooks/useLogin'
 import { artistsShow } from '@/utils'
 import styles from './index.module.css'
-import type * as T from '@/types/song'
+import type * as T from '@/types'
 import { UserContext } from '@/layout'
 
 // 天然闭包环境

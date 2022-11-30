@@ -1,11 +1,16 @@
-import { useContext } from 'react'
+import {useContext, useEffect, useState} from 'react'
+import usePlayList from '@/hooks/usePlayList'
+import CustomShowList from '@/components/CustomShowList'
+import type * as T from '@/types'
 import { UserContext } from '@/layout'
 
 function Home() {
-  const value = useContext(UserContext)
+  const { recommendPlayList } = usePlayList()
+  console.log(recommendPlayList)
+
   return (
     <>
-      <div>Home</div>
+      <CustomShowList type={'playList'} dataSource={recommendPlayList ?? []} title={'推荐歌单'} />
     </>
   )
 }

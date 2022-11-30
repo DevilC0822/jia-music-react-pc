@@ -1,0 +1,79 @@
+.title {
+  font-size: 24px;
+  font-weight: bold;
+}
+.box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.playBtnIcon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 52px;
+  height: 52px;
+  color: #fff;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background: hsla(0,0%,100%,.14);
+  border: 1px solid hsla(0,0%,100%,.08);
+  border-radius: 50%;
+  cursor: default;
+  transition: all .5s;
+  opacity: 0;
+}
+.playBtnIcon:focus {
+  outline: none;
+}
+
+.itemBox:hover .playBtnIcon {
+  opacity: 1;
+}
+
+.itemBox {
+  position: relative;
+  width: 19%;
+  margin-top: 20px;
+}
+.itemBox:hover .shadow {
+  transition: all 0.5s;
+  opacity: 1;
+}
+
+.shadow {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  filter: blur(16px) opacity(0.6);
+  transform: scale(0.92, 0.82);
+  top: 12px;
+  z-index: -1;
+  background-size: cover;
+  border-radius: 12px;
+  aspect-ratio: 1/1;
+  opacity: 0;
+}
+
+.img {
+  width: 100%;
+  border-radius: 12px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  aspect-ratio: 1/1;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.img:hover {
+  cursor: pointer;
+}
+
+.playListName {
+  font-size: 12px;
+  margin-top: 5px;
+}
