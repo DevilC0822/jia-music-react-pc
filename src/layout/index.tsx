@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { Layout, Nav, Button, Avatar, Dropdown, Toast } from '@douyinfe/semi-ui'
 import { Outlet, useNavigate } from 'react-router-dom'
 import useLogin from '@/hooks/useLogin'
@@ -18,25 +18,17 @@ import LoginModal from '@/components/LoginModal'
 import styles from './index.module.css'
 
 export const UserContext = React.createContext({
-  loginStatus: false
+  loginStatus: false,
 })
 
 const MainLayout = () => {
   const navigate = useNavigate()
   const { Header, Content } = Layout
-  const { getLoginStatus, logout } = useLogin()
-  const [loginStatus, setLoginStatus] = useState(false)
+  const { loginStatus, updateLoginStatus, logout } = useLogin()
   const [loginModalVisible, setLoginModalVisible] = useState(false)
-
-  const updateLoginStatus = () => {
-    getLoginStatus().then(res => {
-      setLoginStatus(res as boolean)
-    })
-  }
 
   const logoutClick = async () => {
     await logout()
-    setLoginStatus(false)
     Toast.success('退出登录成功')
   }
   useEffect(() => {
@@ -132,20 +124,19 @@ const MainLayout = () => {
                   window.open('https://github.com/DevilC0822/jia-music-react-pc')
                 }}
               />
-              {
-                !loginStatus &&
+              {!loginStatus && (
                 <Avatar
                   color="orange"
                   size="small"
                   style={{ flexShrink: 0 }}
                   onClick={() => {
-                  setLoginModalVisible(true)
-                }}>
+                    setLoginModalVisible(true)
+                  }}
+                >
                   login
                 </Avatar>
-              }
-              {
-                loginStatus &&
+              )}
+              {loginStatus && (
                 <Dropdown
                   trigger={'hover'}
                   position={'bottomLeft'}
@@ -161,7 +152,7 @@ const MainLayout = () => {
                     src={JSON.parse(window.localStorage.getItem('profile') as string).avatarUrl}
                   ></Avatar>
                 </Dropdown>
-              }
+              )}
             </Nav.Footer>
           </Nav>
         </div>
@@ -186,12 +177,13 @@ const MainLayout = () => {
         {/*    <p>Hi, Bytedance dance dance.</p>*/}
         {/*  </Skeleton>*/}
         {/*</div>*/}
-        <UserContext.Provider value={{
-          loginStatus: loginStatus
-        }}>
+        <UserContext.Provider
+          value={{
+            loginStatus,
+          }}
+        >
           <Outlet />
         </UserContext.Provider>
-
       </Content>
       {/*<Footer*/}
       {/*  style={{*/}
@@ -219,7 +211,7 @@ const MainLayout = () => {
       <LoginModal
         loginModalVisible={loginModalVisible}
         setLoginModalVisible={setLoginModalVisible}
-        updateLoginStatus={updateLoginStatus}
+        // updateLoginStatus={updateLoginStatus}
       ></LoginModal>
     </Layout>
   )

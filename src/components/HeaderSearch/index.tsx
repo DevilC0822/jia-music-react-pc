@@ -66,12 +66,11 @@ const HeaderSearch = memo(() => {
           >
             <div className={styles.htoKeywordsListBox}>
               <p style={{ marginRight: 10, whiteSpace: 'nowrap' }}>{item.name}</p>
-              {
-                item.desc &&
+              {item.desc && (
                 <Tag color="light-blue" size="small">
                   {item.desc}
                 </Tag>
-              }
+              )}
             </div>
           </Dropdown.Item>
         ))}

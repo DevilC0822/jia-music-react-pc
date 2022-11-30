@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { Form, Toast, Modal, Button, Dropdown, ButtonGroup, useFormApi, Image } from '@douyinfe/semi-ui'
 import { IconRefresh } from '@douyinfe/semi-icons'
 import useLogin from '@/hooks/useLogin'
+import { UserContext } from '@/layout'
 
 interface ILoginVal {
   phone?: number
@@ -13,12 +14,11 @@ interface ILoginVal {
 interface IProps {
   loginModalVisible: boolean
   setLoginModalVisible: Function
-  updateLoginStatus: Function
 }
 
 const LoginModal = (Props: IProps) => {
   const { phonePasswordLogin, emailPasswordLogin, sentCaptcha, captchaLogin, getQRCode, checkQRCode } = useLogin()
-  const { loginModalVisible, setLoginModalVisible, updateLoginStatus } = Props
+  const { loginModalVisible, setLoginModalVisible } = Props
   const [loginMethod, setLoginMethod] = useState(0)
   const [qrCode, setQRCode] = useState('')
   const [isScanCode, setIsScanCode] = useState(false)
@@ -37,7 +37,6 @@ const LoginModal = (Props: IProps) => {
       Toast.error(res.msg)
     }
     Toast.success('登录成功')
-    await updateLoginStatus()
     setLoginModalVisible(false)
   }
   const emailPasswordBtnClick = async (values: ILoginVal) => {
@@ -55,7 +54,6 @@ const LoginModal = (Props: IProps) => {
       return
     }
     Toast.success('登录成功')
-    await updateLoginStatus()
     setLoginModalVisible(false)
   }
 
@@ -74,7 +72,6 @@ const LoginModal = (Props: IProps) => {
       return
     }
     Toast.success('登录成功')
-    await updateLoginStatus()
     setLoginModalVisible(false)
   }
 
@@ -96,31 +93,32 @@ const LoginModal = (Props: IProps) => {
       })
     }
     return (
-      <Button style={{marginBottom: 12}} onClick={sentCaptchaBtnClick}>发送</Button>
+      <Button style={{ marginBottom: 12 }} onClick={sentCaptchaBtnClick}>
+        发送
+      </Button>
     )
   }
 
-  const initQRCode = () =>{
+  const initQRCode = () => {
     getQRCode().then((res: any) => {
-      if (!res.qrImg){
+      if (!res.qrImg) {
         Toast.error('二维码获取失败, 请重试')
         return
       }
       setQRCode(res.qrImg)
       const timer = setInterval(async () => {
         const statusRes = await checkQRCode(res.qrKey)
-        if ((statusRes as {code: number}).code === 800) {
+        if ((statusRes as { code: number }).code === 800) {
           Toast.error('二维码已过期, 请重新获取')
           clearInterval(timer)
         }
-        if ((statusRes as {code: number}).code === 802) {
+        if ((statusRes as { code: number }).code === 802) {
           setIsScanCode(true)
         }
-        if ((statusRes as {code: number}).code === 803) {
+        if ((statusRes as { code: number }).code === 803) {
           // 这一步会返回cookie
           clearInterval(timer)
           Toast.success('授权登录成功')
-          await updateLoginStatus()
           setLoginModalVisible(false)
         }
       }, 1000)
@@ -139,58 +137,124 @@ const LoginModal = (Props: IProps) => {
         title="登录"
         visible={loginModalVisible}
         maskClosable={false}
-        onCancel={() => {setLoginModalVisible(false)}}
+        onCancel={() => {
+          setLoginModalVisible(false)
+        }}
         footer={<></>}
       >
-        {
-          loginMethod === 0 && <Form onSubmit={phonePasswordLoginBtnClick}>
-            <Form.InputNumber hideButtons field='phone' label='手机号' style={{ width: '100%' }} placeholder='请输入你的手机号'></Form.InputNumber>
-            <Form.Input mode='password' field='password' label='密码' style={{ width: '100%' }} placeholder='输入你的密码'></Form.Input>
+        {loginMethod === 0 && (
+          <Form onSubmit={phonePasswordLoginBtnClick}>
+            <Form.InputNumber
+              hideButtons
+              field="phone"
+              label="手机号"
+              style={{ width: '100%' }}
+              placeholder="请输入你的手机号"
+            ></Form.InputNumber>
+            <Form.Input
+              mode="password"
+              field="password"
+              label="密码"
+              style={{ width: '100%' }}
+              placeholder="输入你的密码"
+            ></Form.Input>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>
                 <span>Or</span>
                 <Dropdown
                   render={
                     <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => {setLoginMethod(1)}}>邮箱登录</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(2)}}>二维码登录</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(3)}}>手机验证码登录</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(1)
+                        }}
+                      >
+                        邮箱登录
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(2)
+                        }}
+                      >
+                        二维码登录
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(3)
+                        }}
+                      >
+                        手机验证码登录
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   }
                 >
-                  <Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}>换种方式登录</Button>
+                  <Button
+                    theme="borderless"
+                    style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
+                  >
+                    换种方式登录
+                  </Button>
                 </Dropdown>
               </p>
-              <Button htmlType='submit'>登录</Button>
+              <Button htmlType="submit">登录</Button>
             </div>
           </Form>
-        }
-        {
-          loginMethod === 1 && <Form onSubmit={emailPasswordBtnClick}>
-            <Form.Input field='email' label='邮箱' style={{ width: '100%' }} placeholder='请输入你的邮箱'></Form.Input>
-            <Form.Input mode='password' field='password' label='密码' style={{ width: '100%' }} placeholder='输入你的密码'></Form.Input>
+        )}
+        {loginMethod === 1 && (
+          <Form onSubmit={emailPasswordBtnClick}>
+            <Form.Input field="email" label="邮箱" style={{ width: '100%' }} placeholder="请输入你的邮箱"></Form.Input>
+            <Form.Input
+              mode="password"
+              field="password"
+              label="密码"
+              style={{ width: '100%' }}
+              placeholder="输入你的密码"
+            ></Form.Input>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>
                 <span>Or</span>
                 <Dropdown
                   render={
                     <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => {setLoginMethod(0)}}>手机号密码</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(2)}}>二维码登录</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(3)}}>手机验证码登录</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(0)
+                        }}
+                      >
+                        手机号密码
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(2)
+                        }}
+                      >
+                        二维码登录
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(3)
+                        }}
+                      >
+                        手机验证码登录
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   }
                 >
-                  <Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}>换种方式登录</Button>
+                  <Button
+                    theme="borderless"
+                    style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
+                  >
+                    换种方式登录
+                  </Button>
                 </Dropdown>
               </p>
-              <Button htmlType='submit'>登录</Button>
+              <Button htmlType="submit">登录</Button>
             </div>
           </Form>
-        }
-        {
-          loginMethod === 2 && <>
-            <div style={{textAlign: 'center'}}>
+        )}
+        {loginMethod === 2 && (
+          <>
+            <div style={{ textAlign: 'center' }}>
               <p>打开网易云app 扫码登录</p>
               <Image
                 width={200}
@@ -198,9 +262,7 @@ const LoginModal = (Props: IProps) => {
                 src={qrCode}
                 fallback={<IconRefresh style={{ fontSize: 50, cursor: 'pointer' }} onClick={initQRCode} />}
               />
-              {
-                isScanCode && <p>已扫码，请授权登录</p>
-              }
+              {isScanCode && <p>已扫码，请授权登录</p>}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p>
@@ -208,24 +270,58 @@ const LoginModal = (Props: IProps) => {
                 <Dropdown
                   render={
                     <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => {setLoginMethod(0)}}>手机号密码</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(1)}}>邮箱登录</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(3)}}>手机验证码登录</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(0)
+                        }}
+                      >
+                        手机号密码
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(1)
+                        }}
+                      >
+                        邮箱登录
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(3)
+                        }}
+                      >
+                        手机验证码登录
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   }
                 >
-                  <Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}>换种方式登录</Button>
+                  <Button
+                    theme="borderless"
+                    style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
+                  >
+                    换种方式登录
+                  </Button>
                 </Dropdown>
               </p>
             </div>
           </>
-        }
-        {
-          loginMethod === 3 && <Form onSubmit={captchaBtnClick}>
-            <Form.InputNumber hideButtons field='phone' label='手机号' style={{ width: '100%' }} placeholder='请输入你的手机号'></Form.InputNumber>
-            <ButtonGroup style={{justifyContent: 'space-between', alignItems: 'flex-end', width: '100%'}}>
-              <Form.InputNumber hideButtons field='captcha' label='验证码' style={{width: 340}} placeholder='输入验证码'>
-              </Form.InputNumber>
+        )}
+        {loginMethod === 3 && (
+          <Form onSubmit={captchaBtnClick}>
+            <Form.InputNumber
+              hideButtons
+              field="phone"
+              label="手机号"
+              style={{ width: '100%' }}
+              placeholder="请输入你的手机号"
+            ></Form.InputNumber>
+            <ButtonGroup style={{ justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
+              <Form.InputNumber
+                hideButtons
+                field="captcha"
+                label="验证码"
+                style={{ width: 340 }}
+                placeholder="输入验证码"
+              ></Form.InputNumber>
               <ComponentUsingFormApi></ComponentUsingFormApi>
             </ButtonGroup>
 
@@ -235,19 +331,42 @@ const LoginModal = (Props: IProps) => {
                 <Dropdown
                   render={
                     <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => {setLoginMethod(0)}}>手机号密码</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(1)}}>邮箱登录</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {setLoginMethod(2)}}>二维码登录</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(0)
+                        }}
+                      >
+                        手机号密码
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(1)
+                        }}
+                      >
+                        邮箱登录
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setLoginMethod(2)
+                        }}
+                      >
+                        二维码登录
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   }
                 >
-                  <Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}>换种方式登录</Button>
+                  <Button
+                    theme="borderless"
+                    style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
+                  >
+                    换种方式登录
+                  </Button>
                 </Dropdown>
               </p>
-              <Button htmlType='submit'>登录</Button>
+              <Button htmlType="submit">登录</Button>
             </div>
           </Form>
-        }
+        )}
       </Modal>
     </>
   )

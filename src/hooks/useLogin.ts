@@ -1,19 +1,19 @@
+import { useState } from 'react'
 import loginApi from '@/service/login'
 import md5 from 'blueimp-md5'
 
 const useLogin = () => {
-  // 获取歌曲详细信息
-  const getLoginStatus = () => {
-    return new Promise(resolve => {
-      loginApi.getLoginStatus().then(res => {
-        if (res.data.profile) {
-          window.localStorage.setItem('profile', JSON.stringify(res.data.profile))
-          resolve(true)
-        } else {
-          window.localStorage.removeItem('profile')
-          resolve(false)
-        }
-      })
+  const [loginStatus, setLoginStatus] = useState(false)
+  // 更新登录状态
+  const updateLoginStatus = () => {
+    loginApi.getLoginStatus().then(res => {
+      if (res.data.profile) {
+        window.localStorage.setItem('profile', JSON.stringify(res.data.profile))
+        setLoginStatus(true)
+      } else {
+        window.localStorage.removeItem('profile')
+        setLoginStatus(false)
+      }
     })
   }
 
@@ -27,6 +27,8 @@ const useLogin = () => {
         })
         .then(res => {
           if (res.profile) {
+            // updateLoginStatus()
+            location.reload()
             resolve({
               data: true,
               msg: '',
@@ -50,6 +52,9 @@ const useLogin = () => {
         })
         .then(res => {
           if (res.cookie) {
+            // updateLoginStatus()
+            location.reload()
+            setLoginStatus(true)
             resolve({
               data: true,
               msg: '',
@@ -65,25 +70,27 @@ const useLogin = () => {
 
   const sentCaptcha = (phone: number) => {
     return new Promise(resolve => {
-      loginApi.sentCaptcha({
-        phone
-      }).then(res => {
-        if (!res.data) {
-          resolve({
-            data: false,
-            msg: res.message,
-          })
-        }
-        resolve({
-          data: true,
-          msg: '',
+      loginApi
+        .sentCaptcha({
+          phone,
         })
-      })
+        .then(res => {
+          if (!res.data) {
+            resolve({
+              data: false,
+              msg: res.message,
+            })
+          }
+          resolve({
+            data: true,
+            msg: '',
+          })
+        })
     })
   }
 
   const captchaLogin = (phone: number, captcha: number) => {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       const verifyRes = await loginApi.verifyCaptcha({
         phone,
         captcha,
@@ -100,6 +107,8 @@ const useLogin = () => {
         captcha,
       })
       if (loginRes.profile) {
+        // updateLoginStatus()
+        location.reload()
         resolve({
           data: true,
           msg: '',
@@ -128,19 +137,28 @@ const useLogin = () => {
 
   const checkQRCode = (qrKey: string) => {
     return new Promise(resolve => {
-      loginApi.QRCodeCheck({
-        key: qrKey
-      }).then(res => {
-        resolve(res)
-      })
+      loginApi
+        .QRCodeCheck({
+          key: qrKey,
+        })
+        .then(res => {
+          if (res.code === 803) {
+            // updateLoginStatus()
+            location.reload()
+          }
+          resolve(res)
+        })
     })
   }
 
   const logout = () => {
-    loginApi.logout().then()
+    loginApi.logout().then(() => {
+      updateLoginStatus()
+    })
   }
   return {
-    getLoginStatus,
+    loginStatus,
+    updateLoginStatus,
     phonePasswordLogin,
     emailPasswordLogin,
     sentCaptcha,
