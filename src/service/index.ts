@@ -1,15 +1,19 @@
-//http.ts
 import axios, { AxiosRequestConfig } from 'axios'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 // 设置请求头和请求路径
-axios.defaults.baseURL = '/api'
-// axios.defaults.baseURL = 'http://175.24.198.84:3000/'
-
+axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL
 axios.defaults.timeout = 10000
 axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
+// 请求拦截器
 axios.interceptors.request.use(
   (config): AxiosRequestConfig<any> => {
+    const { needLoadingBar = false } = config
+    if (needLoadingBar) {
+      NProgress.start()
+    }
     config.params = {
       // realIP: '116.25.146.177',
       timerstamp: Date.parse(new Date().toString()) / 1000,
@@ -21,8 +25,9 @@ axios.interceptors.request.use(
     return error
   },
 )
-// 响应拦截
+// 响应拦截器
 axios.interceptors.response.use(res => {
+  NProgress.done()
   return res
 })
 
@@ -33,18 +38,18 @@ interface ResType<T> {
   msg?: string
   err?: string
 }
-interface Http {
-  get<T>(url: string, params?: unknown): Promise<ResType<T>>
-  post<T>(url: string, params?: unknown): Promise<ResType<T>>
-  upload<T>(url: string, params: unknown): Promise<ResType<T>>
-  download(url: string): void
+interface Service {
+  get<T>(url: string, params?: unknown, options?: AxiosRequestConfig<string> | undefined): Promise<ResType<T>>
+  post<T>(url: string, params?: unknown, options?: AxiosRequestConfig<string> | undefined): Promise<ResType<T>>
+  upload<T>(url: string, params: unknown, options?: AxiosRequestConfig<string> | undefined): Promise<ResType<T>>
+  download(url: string, options?: AxiosRequestConfig<string> | undefined): void
 }
 
-const http: Http = {
-  get(url, params) {
+const service: Service = {
+  get(url, params, options) {
     return new Promise((resolve, reject) => {
       axios
-        .get(url, { params })
+        .get(url, { params,  ...options})
         .then(res => {
           resolve(res.data)
         })
@@ -53,10 +58,10 @@ const http: Http = {
         })
     })
   },
-  post(url, params) {
+  post(url, params, options) {
     return new Promise((resolve, reject) => {
       axios
-        .post(url, JSON.stringify(params))
+        .post(url, JSON.stringify(params), options)
         .then(res => {
           resolve(res.data)
         })
@@ -89,4 +94,4 @@ const http: Http = {
     document.body.appendChild(iframe)
   },
 }
-export default http
+export default service
