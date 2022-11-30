@@ -26,5 +26,3 @@ export interface IVerifyCaptcha {
   phone: number
   captcha: number
 }
-
-

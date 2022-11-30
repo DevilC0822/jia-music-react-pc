@@ -49,7 +49,7 @@ const service: Service = {
   get(url, params, options) {
     return new Promise((resolve, reject) => {
       axios
-        .get(url, { params,  ...options})
+        .get(url, { params, ...options })
         .then(res => {
           resolve(res.data)
         })

@@ -1,6 +1,5 @@
 import service from '@/service'
 import type * as T from './types'
-import {ICheckQRCode, IGetQRCode, IVerifyCaptcha} from './types'
 
 // 获取登录状态
 const getLoginStatus = () => {

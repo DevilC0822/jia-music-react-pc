@@ -1,23 +1,23 @@
 :global(.semi-navigation-horizontal) {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    padding: 0 10vw;
-    backdrop-filter: saturate(180%) blur(20px);
-    background-color: hsla(0,0%,100%,0.86);
-    z-index: 100;
-    border: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 0 10vw;
+  backdrop-filter: saturate(180%) blur(20px);
+  background-color: hsla(0, 0%, 100%, 0.86);
+  z-index: 100;
+  border: none;
 }
 
 :global(.semi-navigation-footer) {
-    width: initial;
-    padding: 0;
+  width: initial;
+  padding: 0;
 }
 
 .MainContent {
-    box-sizing: border-box;
-    height: calc(100vh);
-    padding: 60px 10vw 40px;
-    overflow: auto;
+  box-sizing: border-box;
+  height: calc(100vh);
+  padding: 60px 10vw 40px;
+  overflow: auto;
 }

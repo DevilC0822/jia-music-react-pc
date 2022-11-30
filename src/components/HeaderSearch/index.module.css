@@ -1,7 +1,7 @@
 .htoKeywordsListBox {
-    display: flex;
+  display: flex;
 }
 
 :global(.semi-dropdown-item) {
-    max-width: initial;
+  max-width: initial;
 }
