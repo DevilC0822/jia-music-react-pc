@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
-import playListApi from '@/service/playList'
+import { useContext, useEffect, useState } from 'react'
+import { UserContext } from '@/layout'
+import playListApi, {getTodayRecommendPlayList} from '@/service/playList'
 import type * as T from '@/types'
 
 const usePlayList = () => {
+  const { loginStatus } = useContext(UserContext)
   const [recommendPlayList, setRecommendPlayList] = useState<T.IPlayList[]>()
+  const [todayRecommendPlayList, setTodayRecommendPlayList] = useState<T.IPlayList[]>()
 
-  const getPlayListDetail = (id: string) => {
-
-  }
-  // 获取歌曲详细信息
+  const getPlayListDetail = (id: string) => {}
+  // 获取推荐歌单
   const getRecommendPlayList = (limit: number | undefined = 5) => {
     playListApi
       .getRecommendPlayList({
@@ -27,13 +28,34 @@ const usePlayList = () => {
         setRecommendPlayList(result)
       })
   }
+  // 获取每日推荐歌单(需登录)
+  const getTodayRecommendPlayList = () => {
+    playListApi.getTodayRecommendPlayList().then(res => {
+      const result: T.IPlayList[] = []
+      res.recommend.forEach((i: any) => {
+        result.push({
+          playListId: i.id,
+          playListName: i.name,
+          picUrl: i.picUrl,
+          playCount: i.playCount,
+        })
+      })
+      setTodayRecommendPlayList(result)
+    })
+  }
 
   useEffect(() => {
     getRecommendPlayList(10)
   }, [])
+
+  useEffect(() => {
+    if (loginStatus) {
+      getTodayRecommendPlayList()
+    }
+  }, [loginStatus])
   return {
     recommendPlayList,
-    getRecommendPlayList,
+    todayRecommendPlayList,
   }
 }
 
