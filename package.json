@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@douyinfe/semi-icons": "^2.24.2",
+    "@douyinfe/semi-illustrations": "^2.24.2",
     "@douyinfe/semi-ui": "^2.22.3",
     "@nondanee/unblockneteasemusic": "^0.25.3",
     "@types/nprogress": "^0.2.0",

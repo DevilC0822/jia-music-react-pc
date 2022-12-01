@@ -12,27 +12,23 @@ interface IProps {
 function Home(props: IProps) {
   const { dataSource = [], type = 'playList', title = '' } = props
   return (
-    <>
+    <div style={{marginTop: 20}}>
       <p className={styles.title}>{title}</p>
       <div className={styles.box}>
-        {dataSource.map((i, ind) => (
-          <>
-            <div className={styles.itemBox} key={i.playListId}>
-              <Button
-                className={styles.playBtnIcon}
-                icon={<IconTreeTriangleRight
-                  style={{color: '#fff', fontSize: 32}}
-                />}
-                aria-label="播放"
-              />
-              <img className={styles.img} src={i.picUrl} alt={''} />
-              <p className={styles.playListName}>{i.playListName}</p>
-              <div className={styles.shadow} style={{ backgroundImage: `url('${i.picUrl}')` }}></div>
-            </div>
-          </>
+        {dataSource.map(i => (
+          <div className={styles.itemBox} key={i.playListId}>
+            <Button
+              className={styles.playBtnIcon}
+              icon={<IconTreeTriangleRight style={{ color: '#fff', fontSize: 32 }} />}
+              aria-label="播放"
+            />
+            <img className={styles.img} src={i.picUrl} alt={''} />
+            <p className={styles.playListName}>{i.playListName}</p>
+            <div className={styles.shadow} style={{ backgroundImage: `url('${i.picUrl}')` }}></div>
+          </div>
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
