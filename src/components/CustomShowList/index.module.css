@@ -73,7 +73,22 @@
   cursor: pointer;
 }
 
-.playListName {
-  font-size: 12px;
+.showNameBox {
+  display: flex;
   margin-top: 5px;
 }
+.showNameBox .name {
+  font-size: 14px;
+  margin-right: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold;
+}
+.showNameBox .songArtists {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

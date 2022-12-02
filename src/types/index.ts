@@ -1,7 +1,7 @@
 export interface ISong {
   [propsName: string]: any
   songName?: string
-  songId?: string
+  id?: string
   songAlias?: string
   songArtists?: string
   picUrl?: string
@@ -10,9 +10,16 @@ export interface ISong {
   fee?: number
 }
 
+export interface IArtists {
+  [propsName: string]: any
+  artistsName?: string
+  id?: string
+  picUrl?: string
+}
+
 export interface IPlayList {
   [propsName: string]: any
-  playListId?: string
+  id?: string
   playListName?: string
   playListDesc?: string
   picUrl?: string

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '@/layout'
-import playListApi, {getTodayRecommendPlayList} from '@/service/playList'
+import playListApi from '@/service/playList'
 import type * as T from '@/types'
 
 const usePlayList = () => {
@@ -19,7 +19,7 @@ const usePlayList = () => {
         const result: T.IPlayList[] = []
         res.result.forEach((i: any) => {
           result.push({
-            playListId: i.id,
+            id: i.id,
             playListName: i.name,
             picUrl: i.picUrl,
             playCount: i.playCount,
@@ -34,7 +34,7 @@ const usePlayList = () => {
       const result: T.IPlayList[] = []
       res.recommend.forEach((i: any) => {
         result.push({
-          playListId: i.id,
+          id: i.id,
           playListName: i.name,
           picUrl: i.picUrl,
           playCount: i.playCount,

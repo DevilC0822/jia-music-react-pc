@@ -3,7 +3,9 @@ import service from '@/service'
 
 // 获取推荐歌单
 export const getRecommendPlayList = (params: { limit?: number }) => {
-  return service.post('/personalized', params)
+  return service.post('/personalized', params, {
+    needLoadingBar: true,
+  })
 }
 
 // 获取每日推荐歌单(需登录)
