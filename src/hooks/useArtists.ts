@@ -7,10 +7,11 @@ const useArtists = () => {
   const [topArtists, setTopArtists] = useState<T.ISong[]>()
 
   const getTopArtists = (limit: number | undefined = 5, offset: number | undefined = 0) => {
-    artistsAi.getTopArtists({
-      limit,
-      offset,
-    })
+    artistsAi
+      .getTopArtists({
+        limit,
+        offset,
+      })
       .then(res => {
         const result: T.IArtists[] = []
         res.artists.forEach((i: any) => {
@@ -24,11 +25,9 @@ const useArtists = () => {
       })
   }
 
-
   useEffect(() => {
     getTopArtists(6)
   }, [])
-
 
   return {
     topArtists,

@@ -22,7 +22,11 @@ function Home() {
             <CustomShowList type={'song'} dataSource={todayRecommendSong?.slice(0, 10) ?? []} title={'今日推荐歌曲'} />
           )}
           {todayRecommendPlayList && (
-            <CustomShowList type={'playList'} dataSource={todayRecommendPlayList?.slice(0, 10) ?? []} title={'今日推荐歌单'} />
+            <CustomShowList
+              type={'playList'}
+              dataSource={todayRecommendPlayList?.slice(0, 10) ?? []}
+              title={'今日推荐歌单'}
+            />
           )}
         </>
       )}

@@ -9,9 +9,11 @@ module.exports = {
   plugins: [
     "react",
     "react-hooks",
-    "@typescript-eslint/eslint-plugin"
+    "@typescript-eslint/eslint-plugin",
+    "prettier"
   ], // 插件
   rules: {
+    "prettier/prettier": "error",
     /**
      * 常规配置
      */

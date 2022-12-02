@@ -22,7 +22,8 @@ const useSong = () => {
   }
 
   const getRecommendNewSong = (limit: number | undefined = 5) => {
-    songApi.getRecommendNewSong({
+    songApi
+      .getRecommendNewSong({
         limit,
       })
       .then(res => {
@@ -40,19 +41,18 @@ const useSong = () => {
   }
 
   const getTodayRecommendSong = () => {
-    songApi.getTodayRecommendSong()
-      .then(res => {
-        const result: T.ISong[] = []
-        res.data.dailySongs.forEach((i: any) => {
-          result.push({
-            id: i.al.id,
-            songName: i.al.name,
-            picUrl: i.al.picUrl,
-            songArtists: artistsShow(i.ar),
-          })
+    songApi.getTodayRecommendSong().then(res => {
+      const result: T.ISong[] = []
+      res.data.dailySongs.forEach((i: any) => {
+        result.push({
+          id: i.al.id,
+          songName: i.al.name,
+          picUrl: i.al.picUrl,
+          songArtists: artistsShow(i.ar),
         })
-        setTodayRecommendSong(result)
       })
+      setTodayRecommendSong(result)
+    })
   }
 
   useEffect(() => {
@@ -64,7 +64,6 @@ const useSong = () => {
       getTodayRecommendSong()
     }
   }, [loginStatus])
-
 
   return {
     recommendNewSong,

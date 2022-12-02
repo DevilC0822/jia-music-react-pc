@@ -19,11 +19,11 @@
   color: #fff;
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  background: hsla(0,0%,100%,.14);
-  border: 1px solid hsla(0,0%,100%,.08);
+  background: hsla(0, 0%, 100%, 0.14);
+  border: 1px solid hsla(0, 0%, 100%, 0.08);
   border-radius: 50%;
   cursor: default;
-  transition: all .5s;
+  transition: all 0.5s;
   opacity: 0;
 }
 .playBtnIcon:focus {
@@ -91,4 +91,3 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-

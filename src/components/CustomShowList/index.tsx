@@ -13,13 +13,12 @@ function Home(props: IProps) {
   const { dataSource = [], type = 'playList', title = '' } = props
   return (
     <>
-      {
-        dataSource.length > 0 &&
+      {dataSource.length > 0 && (
         <div style={{ marginTop: 20 }}>
           <p className={styles.title}>{title}</p>
           <div className={styles.box}>
             {dataSource.map(i => (
-              <div className={styles.itemBox} style={{width: `${type === 'artists' ? '15%' : '19%'}`}} key={i.id}>
+              <div className={styles.itemBox} style={{ width: `${type === 'artists' ? '15%' : '19%'}` }} key={i.id}>
                 <Button
                   className={styles.playBtnIcon}
                   icon={<IconTreeTriangleRight style={{ color: '#fff', fontSize: 32 }} />}
@@ -35,20 +34,28 @@ function Home(props: IProps) {
                       </div>
                     </>
                   ))}
-                {
-                  type === 'artists' && <>
-                    <img style={{borderRadius: '50%'}} className={styles.img} src={i.picUrl} alt={''} />
-                    <div style={{justifyContent: 'center'}} className={styles.showNameBox}>
-                      <p className={styles.name} style={{marginRight: 0}}>{i.artistsName}</p>
+                {type === 'artists' && (
+                  <>
+                    <img style={{ borderRadius: '50%' }} className={styles.img} src={i.picUrl} alt={''} />
+                    <div style={{ justifyContent: 'center' }} className={styles.showNameBox}>
+                      <p className={styles.name} style={{ marginRight: 0 }}>
+                        {i.artistsName}
+                      </p>
                     </div>
                   </>
-                }
-                <div style={{borderRadius: `${type === 'artists' ? '50%' : '12px'}`, backgroundImage: `url('${i.picUrl}')`}} className={styles.shadow} ></div>
+                )}
+                <div
+                  style={{
+                    borderRadius: `${type === 'artists' ? '50%' : '12px'}`,
+                    backgroundImage: `url('${i.picUrl}')`,
+                  }}
+                  className={styles.shadow}
+                ></div>
               </div>
             ))}
           </div>
         </div>
-      }
+      )}
     </>
   )
 }
