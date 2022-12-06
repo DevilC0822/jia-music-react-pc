@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { Navigate } from 'react-router-dom'
-import { KeepAlive, AliveScope } from 'react-activation'
+import { KeepAlive } from 'react-activation'
 
 const MainLayout = lazy(() => import('@/layout'))
 const Home = lazy(() => import('@/views/Home'))

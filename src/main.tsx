@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { routes } from './router'
 import { BrowserRouter, useRoutes } from 'react-router-dom'
-import { KeepAlive, AliveScope } from 'react-activation'
+import { AliveScope } from 'react-activation'
 import './index.css'
 
 function App() {

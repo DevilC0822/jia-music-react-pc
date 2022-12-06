@@ -7,8 +7,8 @@ import CustomShowList from '@/components/CustomShowList'
 import type * as T from '@/types'
 
 function Home() {
-  const { recommendPlayList, todayRecommendPlayList } = usePlayList()
-  const { recommendNewSong, todayRecommendSong } = useSong()
+  const { recommendPlayList, todayRecommendPlayList } = usePlayList(true)
+  const { recommendNewSong, todayRecommendSong } = useSong(true)
   const { topArtists } = useArtists()
 
   return (

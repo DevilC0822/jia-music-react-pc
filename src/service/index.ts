@@ -37,6 +37,7 @@ interface ResType<T> {
   data?: any
   msg?: string
   err?: string
+  sub?: any
 }
 interface Service {
   get<T>(url: string, params?: unknown, options?: AxiosRequestConfig<string> | undefined): Promise<ResType<T>>

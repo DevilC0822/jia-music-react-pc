@@ -5,7 +5,7 @@ import type * as T from '@/types'
 import { UserContext } from '@/layout'
 import useLogin from '@/hooks/useLogin'
 
-const useSong = () => {
+const useSong = (needInit = false) => {
   // const { loginStatus } = useContext(UserContext)
   const { updateLoginStatus } = useLogin()
   const [recommendNewSong, setRecommendNewSong] = useState<T.ISong[]>()
@@ -58,9 +58,11 @@ const useSong = () => {
   }
 
   useEffect(() => {
-    getRecommendNewSong()
-    if (JSON.parse(window.localStorage.getItem('loginStatus')!)) {
-      getTodayRecommendSong()
+    if (needInit) {
+      getRecommendNewSong()
+      if (JSON.parse(window.localStorage.getItem('loginStatus')!)) {
+        getTodayRecommendSong()
+      }
     }
   }, [])
 

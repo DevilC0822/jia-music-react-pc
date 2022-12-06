@@ -1,0 +1,14 @@
+.collapseBox {
+  margin-top: 10px;
+  background: #f5f5f7;
+  border-radius: 10px;
+  padding: 8px;
+}
+.collapseContent {
+  display: flex;
+}
+
+:global(.semi-button.checked) {
+  background-color: #646cff !important;
+}
+
