@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { Navigate } from 'react-router-dom'
+import { KeepAlive, AliveScope } from 'react-activation'
 
 const MainLayout = lazy(() => import('@/layout'))
 const Home = lazy(() => import('@/views/Home'))
@@ -19,17 +20,21 @@ const routes = [
       {
         path: 'home',
         element: (
-          <Suspense>
-            <Home />
-          </Suspense>
+          <KeepAlive key={'home'}>
+            <Suspense>
+              <Home />
+            </Suspense>
+          </KeepAlive>
         ),
       },
       {
         path: 'explore',
         element: (
-          <Suspense>
-            <Explore />
-          </Suspense>
+          <KeepAlive key={'explore'}>
+            <Suspense>
+              <Explore />
+            </Suspense>
+          </KeepAlive>
         ),
       },
       {

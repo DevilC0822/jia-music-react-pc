@@ -4,7 +4,8 @@ import playListApi from '@/service/playList'
 import type * as T from '@/types'
 
 const usePlayList = () => {
-  const { loginStatus } = useContext(UserContext)
+  // react-activation 库现存bug 在使用KeepAlive的同时，拿不到最新的 connect 状态 https://github.com/CJY0208/react-activation/issues/229
+  // const { loginStatus } = useContext(UserContext)
   const [recommendPlayList, setRecommendPlayList] = useState<T.IPlayList[]>()
   const [todayRecommendPlayList, setTodayRecommendPlayList] = useState<T.IPlayList[]>()
 
@@ -46,13 +47,16 @@ const usePlayList = () => {
 
   useEffect(() => {
     getRecommendPlayList(10)
-  }, [])
-
-  useEffect(() => {
-    if (loginStatus) {
+    if (JSON.parse(window.localStorage.getItem('loginStatus')!)) {
       getTodayRecommendPlayList()
     }
-  }, [loginStatus])
+  }, [])
+
+  // useEffect(() => {
+  //   if (loginStatus) {
+  //     getTodayRecommendPlayList()
+  //   }
+  // }, [loginStatus])
   return {
     recommendPlayList,
     todayRecommendPlayList,

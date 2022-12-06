@@ -24,19 +24,23 @@ function Home(props: IProps) {
                   icon={<IconTreeTriangleRight style={{ color: '#fff', fontSize: 32 }} />}
                   aria-label="播放"
                 />
-                {type === 'playList' ||
-                  (type === 'song' && (
-                    <>
-                      <img className={styles.img} src={i.picUrl} alt={''} />
-                      <div className={styles.showNameBox}>
-                        <p className={styles.name}>{i.playListName ?? i.songName}</p>
-                        {i.songArtists && <p className={styles.songArtists}>{i.songArtists}</p>}
-                      </div>
-                    </>
-                  ))}
+                {(type === 'playList' || type === 'song') && (
+                  <>
+                    <img className={styles.img} src={`${i.picUrl}?param=512y512`} alt={''} />
+                    <div className={styles.showNameBox}>
+                      <p className={styles.name}>{i.playListName ?? i.songName}</p>
+                      {i.songArtists && <p className={styles.songArtists}>{i.songArtists}</p>}
+                    </div>
+                  </>
+                )}
                 {type === 'artists' && (
                   <>
-                    <img style={{ borderRadius: '50%' }} className={styles.img} src={i.picUrl} alt={''} />
+                    <img
+                      style={{ borderRadius: '50%' }}
+                      className={styles.img}
+                      src={`${i.picUrl}?param=512y512`}
+                      alt={''}
+                    />
                     <div style={{ justifyContent: 'center' }} className={styles.showNameBox}>
                       <p className={styles.name} style={{ marginRight: 0 }}>
                         {i.artistsName}

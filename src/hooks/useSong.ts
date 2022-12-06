@@ -3,9 +3,11 @@ import { artistsShow } from '@/utils'
 import songApi from '@/service/song'
 import type * as T from '@/types'
 import { UserContext } from '@/layout'
+import useLogin from '@/hooks/useLogin'
 
 const useSong = () => {
-  const { loginStatus } = useContext(UserContext)
+  // const { loginStatus } = useContext(UserContext)
+  const { updateLoginStatus } = useLogin()
   const [recommendNewSong, setRecommendNewSong] = useState<T.ISong[]>()
   const [todayRecommendSong, setTodayRecommendSong] = useState<T.ISong[]>()
   // 获取歌曲详细信息
@@ -57,13 +59,16 @@ const useSong = () => {
 
   useEffect(() => {
     getRecommendNewSong()
-  }, [])
-
-  useEffect(() => {
-    if (loginStatus) {
+    if (JSON.parse(window.localStorage.getItem('loginStatus')!)) {
       getTodayRecommendSong()
     }
-  }, [loginStatus])
+  }, [])
+
+  // useEffect(() => {
+  //   if (loginStatus) {
+  //     getTodayRecommendSong()
+  //   }
+  // }, [loginStatus])
 
   return {
     recommendNewSong,

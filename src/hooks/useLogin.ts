@@ -5,12 +5,15 @@ import md5 from 'blueimp-md5'
 const useLogin = () => {
   const [loginStatus, setLoginStatus] = useState(false)
   // 更新登录状态
+  // 暂时使用localStorage 暂存 因react-activation 库的现存bug
   const updateLoginStatus = () => {
     loginApi.getLoginStatus().then(res => {
       if (res.data.profile) {
+        window.localStorage.setItem('loginStatus', 'true')
         window.localStorage.setItem('profile', JSON.stringify(res.data.profile))
         setLoginStatus(true)
       } else {
+        window.localStorage.setItem('loginStatus', 'false')
         window.localStorage.removeItem('profile')
         setLoginStatus(false)
       }
