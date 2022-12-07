@@ -26,10 +26,16 @@ const MainLayout = () => {
   const { Header, Content } = Layout
   const { loginStatus, updateLoginStatus, logout } = useLogin()
   const [loginModalVisible, setLoginModalVisible] = useState(false)
+  const [selectedKeys, setSelectedKeys] = useState([window.location.pathname.substring(1)])
 
   const logoutClick = async () => {
     await logout()
     Toast.success('退出登录成功')
+  }
+
+  const routerJump = (url: string) => {
+    setSelectedKeys([url])
+    navigate(`/${url}`)
   }
   useEffect(() => {
     updateLoginStatus()
@@ -51,25 +57,15 @@ const MainLayout = () => {
     <Layout>
       <Header>
         <div>
-          <Nav mode="horizontal" defaultSelectedKeys={['Home']}>
+          <Nav mode="horizontal" selectedKeys={selectedKeys}>
             <Nav.Header>
-              <Nav.Item
-                onClick={() => navigate(-1)}
-                itemKey="back"
-                icon={<IconChevronLeft size="large" />}
-                style={{ margin: 0 }}
-              />
-              <Nav.Item
-                onClick={() => navigate(1)}
-                itemKey="forward"
-                icon={<IconChevronRight size="large" />}
-                style={{ margin: 0 }}
-              />
+              <Nav.Item onClick={() => navigate(-1)} icon={<IconChevronLeft size="large" />} style={{ margin: 0 }} />
+              <Nav.Item onClick={() => navigate(1)} icon={<IconChevronRight size="large" />} style={{ margin: 0 }} />
             </Nav.Header>
-            <Nav.Item onClick={() => navigate('/home')} itemKey="Home" text="首页" icon={<IconHome size="large" />} />
+            <Nav.Item onClick={() => routerJump('home')} itemKey="home" text="首页" icon={<IconHome size="large" />} />
             <Nav.Item
-              onClick={() => navigate('/explore')}
-              itemKey="Live"
+              onClick={() => routerJump('explore')}
+              itemKey="explore"
               text="发现"
               icon={<IconGridView size="large" />}
             />
