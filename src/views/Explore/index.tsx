@@ -32,7 +32,7 @@ function Explore() {
   const [hotPlayList, setHotPlayList] = useState<T.IPlayList[]>([])
   const [hotPlayListCategory, setHotPlayListCategory] = useState({
     cat: '全部',
-    limit: 20,
+    limit: 10,
     offset: 0,
     order: 'hot',
   })
@@ -110,9 +110,8 @@ function Explore() {
       .then((res: any) => {
         setHasMore(res.more)
         setHotPlayList(() => {
-          const result = hotPlayList
-          if (result.length !== 0) {
-            return [...result, ...res.data].reduce((tempArr, item) => {
+          if (hotPlayList.length !== 0) {
+            return [...hotPlayList, ...res.data].reduce((tempArr, item) => {
               if (tempArr?.findIndex((i: { id: string }) => i.id === item.id) === -1) {
                 tempArr.push(item)
               }
