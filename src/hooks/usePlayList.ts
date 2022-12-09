@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
-import { UserContext } from '@/layout'
-import playListApi, { getPlayListCategory } from '@/service/playList'
+// import { UserContext } from '@/layout'
+import playListApi from '@/service/playList'
 import type * as T from '@/types'
+import type * as playListType from '@/service/playList/types'
 
 const usePlayList = (needInit = false) => {
   // react-activation 库现存bug 在使用KeepAlive的同时，拿不到最新的 connect 状态 https://github.com/CJY0208/react-activation/issues/229
@@ -9,7 +10,7 @@ const usePlayList = (needInit = false) => {
   const [recommendPlayList, setRecommendPlayList] = useState<T.IPlayList[]>()
   const [todayRecommendPlayList, setTodayRecommendPlayList] = useState<T.IPlayList[]>()
 
-  const getPlayListDetail = (id: string) => {}
+  // const getPlayListDetail = (id: string) => {}
   // 获取推荐歌单
   const getRecommendPlayList = (limit: number | undefined = 5) => {
     playListApi
@@ -53,9 +54,25 @@ const usePlayList = (needInit = false) => {
     })
   }
 
+  const getPlayListByCategory = (hotPlayListCategory: playListType.IPlayListCategory) => {
+    return new Promise(resolve => {
+      playListApi.getPlayListByCategory(hotPlayListCategory).then(res => {
+        const data: T.IPlayList[] = res.playlists.map((i: any) => ({
+          playListName: i.name,
+          id: i.id,
+          picUrl: `${i.coverImgUrl}?param=512y512`,
+          playCount: i.playCount,
+        }))
+        resolve({
+          data,
+          more: res.more,
+        })
+      })
+    })
+  }
+
   useEffect(() => {
     if (needInit) {
-      console.log('useEffect 执行')
       getRecommendPlayList(10)
       if (JSON.parse(window.localStorage.getItem('loginStatus')!)) {
         getTodayRecommendPlayList()
@@ -72,6 +89,7 @@ const usePlayList = (needInit = false) => {
     recommendPlayList,
     todayRecommendPlayList,
     getPlayListCategory,
+    getPlayListByCategory,
   }
 }
 

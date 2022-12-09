@@ -18,7 +18,7 @@ const HeaderSearch = memo(() => {
   }
 
   const search = (name: string) => {
-    navigate(`search/${name ? name : realKeywords}`)
+    navigate(`/search/${name ? name : realKeywords}`)
   }
   const getDefaultSearchKeywords = () => {
     searchApi.getDefaultSearchKeywords().then(res => {

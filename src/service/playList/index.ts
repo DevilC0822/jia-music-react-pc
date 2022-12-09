@@ -20,7 +20,9 @@ export const getPlayListCategory = () => {
 
 // 获取网友精选碟歌单
 export const getPlayListByCategory = (params: T.IPlayListCategory) => {
-  return service.post('/top/playlist', params)
+  return service.post('/top/playlist', params, {
+    needLoadingBar: true,
+  })
 }
 
 export default {

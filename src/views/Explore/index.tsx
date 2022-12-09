@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import usePlayList from '@/hooks/usePlayList'
-import { Collapsible, Button, Checkbox } from '@douyinfe/semi-ui'
+import type * as T from '@/types'
+import type * as playListType from '@/service/playList/types'
+import { Collapsible, Button } from '@douyinfe/semi-ui'
+import CustomShowList from '@/components/CustomShowList'
 import styles from './index.module.css'
 
 interface ICustomPlayListCategory {
@@ -13,11 +16,26 @@ interface IAllPlayListCategory {
 }
 
 function Explore() {
-  const { getPlayListCategory } = usePlayList()
+  const { getPlayListCategory, getPlayListByCategory } = usePlayList()
   const [isOpen, setOpen] = useState(false)
-  const [customPlayListCategoryOption, setCustomPlayListCategoryOption] = useState<ICustomPlayListCategory[]>([])
-  const [allPlayListCategoryOption, setAllPlayListCategoryOption] = useState<IAllPlayListCategory[]>([])
-  const [categoryMap, setCategoryMap] = useState<{ [key: number]: string }>({})
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [customPlayListCategoryOption, setCustomPlayListCategoryOption] = useState<ICustomPlayListCategory[]>(
+    JSON.parse(window.localStorage.getItem('customOptionSetting')!) ?? [],
+  )
+  const [allPlayListCategoryOption, setAllPlayListCategoryOption] = useState<IAllPlayListCategory[]>(
+    JSON.parse(window.localStorage.getItem('allOptionSetting')!) ?? [],
+  )
+  const [categoryMap, setCategoryMap] = useState<{ [key: string]: string }>(
+    JSON.parse(window.localStorage.getItem('categoryMap')!) ?? {},
+  )
+  const [hotPlayList, setHotPlayList] = useState<T.IPlayList[]>([])
+  const [hotPlayListCategory, setHotPlayListCategory] = useState({
+    cat: '全部',
+    limit: 20,
+    offset: 0,
+    order: 'hot',
+  })
 
   const getPlayListCategoryOption = () => {
     getPlayListCategory().then((res: any) => {
@@ -27,6 +45,7 @@ function Explore() {
           category: 4,
         },
       ]
+      window.localStorage.setItem('categoryMap', JSON.stringify(res.categories))
       setCategoryMap(res.categories)
       // @ts-ignore
       res.sub.forEach((i: { name: string; category: number; hot: boolean }) => {
@@ -52,7 +71,7 @@ function Explore() {
           }
         })
       })
-      console.log(resultAll)
+      window.localStorage.setItem('allOptionSetting', JSON.stringify(resultAll))
       setAllPlayListCategoryOption(resultAll)
       resultCustom.push({
         value: '...',
@@ -61,12 +80,16 @@ function Explore() {
       setCustomPlayListCategoryOption(resultCustom)
     })
   }
-
   const btnClick = (val: string) => {
     if (val === '...') {
       setOpen(!isOpen)
       return
     }
+    setHotPlayList([])
+    setHotPlayListCategory({
+      ...hotPlayListCategory,
+      cat: val,
+    })
   }
   const isCheck = (val: string) => {
     return customPlayListCategoryOption.find(i => i.value === val)
@@ -81,9 +104,53 @@ function Explore() {
     setCustomPlayListCategoryOption(result)
   }
 
+  const getHotPlayList = (hotPlayListCategory: playListType.IPlayListCategory) => {
+    setLoading(true)
+    getPlayListByCategory(hotPlayListCategory)
+      .then((res: any) => {
+        setHasMore(res.more)
+        setHotPlayList(() => {
+          const result = hotPlayList
+          if (result.length !== 0) {
+            return [...result, ...res.data].reduce((tempArr, item) => {
+              if (tempArr?.findIndex((i: { id: string }) => i.id === item.id) === -1) {
+                tempArr.push(item)
+              }
+              return tempArr
+            }, [])
+          }
+          return res.data
+        })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  const loadMore = () => {
+    setHotPlayListCategory({
+      ...hotPlayListCategory,
+      offset: hotPlayListCategory.offset + 10,
+    })
+  }
+
   useEffect(() => {
-    getPlayListCategoryOption()
+    window.localStorage.setItem('customOptionSetting', JSON.stringify(customPlayListCategoryOption))
+  }, [customPlayListCategoryOption])
+
+  useEffect(() => {
+    if (
+      !window.localStorage.getItem('customOptionSetting') ||
+      !window.localStorage.getItem('allOptionSetting') ||
+      !window.localStorage.getItem('categoryMap')
+    ) {
+      getPlayListCategoryOption()
+    }
+    getHotPlayList(hotPlayListCategory)
   }, [])
+  useEffect(() => {
+    getHotPlayList(hotPlayListCategory)
+  }, [hotPlayListCategory])
   return (
     <div style={{ marginTop: 20 }}>
       {customPlayListCategoryOption.length > 1 &&
@@ -129,6 +196,14 @@ function Explore() {
           </div>
         )}
       </Collapsible>
+      <CustomShowList type={'playList'} dataSource={hotPlayList ?? []} title={hotPlayListCategory.cat} />
+      {hotPlayList.length > 0 && (
+        <div style={{ textAlign: 'center', marginTop: 20 }}>
+          <Button disabled={!hasMore} loading={loading} type={'primary'} onClick={loadMore}>
+            加载更多
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
