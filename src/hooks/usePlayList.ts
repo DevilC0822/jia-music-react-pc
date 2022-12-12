@@ -60,7 +60,7 @@ const usePlayList = (needInit = false) => {
         const data: T.IPlayList[] = res.playlists.map((i: any) => ({
           playListName: i.name,
           id: i.id,
-          picUrl: `${i.coverImgUrl}?param=512y512`,
+          picUrl: `${i.coverImgUrl}?param=300y300`,
           playCount: i.playCount,
         }))
         resolve({

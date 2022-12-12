@@ -15,7 +15,7 @@ function PlayCount(props: IProps) {
   return (
     <>
       <div className={styles.box}>
-        <IconPlayCircle style={{ marginRight: 4 }} />
+        <IconPlayCircle style={{ marginRight: 4, fontSize: 14 }} />
         {convert(playCount)}
       </div>
     </>

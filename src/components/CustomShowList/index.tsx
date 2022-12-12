@@ -27,7 +27,7 @@ function Home(props: IProps) {
                 />
                 {(type === 'playList' || type === 'song') && (
                   <>
-                    <img className={styles.img} src={`${i.picUrl}?param=512y512`} alt={''} />
+                    <img className={styles.img} src={`${i.picUrl}?param=300y300`} alt={''} />
                     <div className={styles.showNameBox}>
                       <p className={styles.name}>{i.playListName ?? i.songName}</p>
                       {i.songArtists && <p className={styles.songArtists}>{i.songArtists}</p>}
@@ -40,7 +40,7 @@ function Home(props: IProps) {
                     <img
                       style={{ borderRadius: '50%' }}
                       className={styles.img}
-                      src={`${i.picUrl}?param=512y512`}
+                      src={`${i.picUrl}?param=300y300`}
                       alt={''}
                     />
                     <div style={{ justifyContent: 'center' }} className={styles.showNameBox}>
