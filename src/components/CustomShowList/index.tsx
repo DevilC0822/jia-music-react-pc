@@ -1,4 +1,5 @@
-import { useState } from 'react'
+// import { useState } from 'react'
+import PlayCount from './components/PlayCount'
 import type * as T from '@/types'
 import { Button } from '@douyinfe/semi-ui'
 import { IconTreeTriangleRight } from '@douyinfe/semi-icons'
@@ -31,6 +32,7 @@ function Home(props: IProps) {
                       <p className={styles.name}>{i.playListName ?? i.songName}</p>
                       {i.songArtists && <p className={styles.songArtists}>{i.songArtists}</p>}
                     </div>
+                    {type === 'playList' && <PlayCount playCount={i.playCount} />}
                   </>
                 )}
                 {type === 'artists' && (

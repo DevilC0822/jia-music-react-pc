@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 // import { UserContext } from '@/layout'
 import playListApi from '@/service/playList'
 import type * as T from '@/types'
@@ -39,7 +39,7 @@ const usePlayList = (needInit = false) => {
           id: i.id,
           playListName: i.name,
           picUrl: i.picUrl,
-          playCount: i.playCount,
+          playCount: i.playcount,
         })
       })
       setTodayRecommendPlayList(result)
