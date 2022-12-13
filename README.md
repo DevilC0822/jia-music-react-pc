@@ -1,6 +1,6 @@
 # React - 云音乐项目简介
 
-## [线上预览](http://constj.cn:7001/home)
+## [线上预览](http://175.24.198.84:7001/home)
 
 ## ✨ 特性
 
@@ -64,7 +64,7 @@ git clone git@github.com:DevilC0822/jia-music-react-pc.git
 3. 安装依赖
 
 ```sh
-npm i
+pnpm install
 ```
 
 4. （可选）使用 Nginx 反向代理 API，将 API 路径映射为 `/api`，如果 API 和网页不在同一个域名下的话（跨域），会有一些 bug。
@@ -72,7 +72,7 @@ npm i
 5. 编译打包
 
 ```sh
-yarn run build
+pnpm run build
 ```
 
 6. 将 `/dist` 目录下的文件上传到你的 Web 服务器
