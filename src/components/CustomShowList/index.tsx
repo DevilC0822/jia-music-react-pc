@@ -1,6 +1,7 @@
 // import { useState } from 'react'
-import PlayCount from './components/PlayCount'
+import PlayCount from '@/components/PlayCount'
 import type * as T from '@/types'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@douyinfe/semi-ui'
 import { IconTreeTriangleRight } from '@douyinfe/semi-icons'
 import styles from './index.module.css'
@@ -12,6 +13,11 @@ interface IProps {
 }
 function Home(props: IProps) {
   const { dataSource = [], type = 'playList', title = '' } = props
+  const navigate = useNavigate()
+
+  const jumpPage = (id: string) => {
+    navigate(`/${type}/${id}`)
+  }
   return (
     <>
       {dataSource.length > 0 && (
@@ -19,7 +25,12 @@ function Home(props: IProps) {
           <p className={styles.title}>{title}</p>
           <div className={styles.box}>
             {dataSource.map(i => (
-              <div className={styles.itemBox} style={{ width: `${type === 'artists' ? '15%' : '19%'}` }} key={i.id}>
+              <div
+                className={styles.itemBox}
+                style={{ width: `${type === 'artists' ? '15%' : '19%'}` }}
+                key={i.id}
+                onClick={() => jumpPage(i.id!)}
+              >
                 <Button
                   className={styles.playBtnIcon}
                   icon={<IconTreeTriangleRight style={{ color: '#fff', fontSize: 32 }} />}

@@ -6,6 +6,9 @@ const MainLayout = lazy(() => import('@/layout'))
 const Home = lazy(() => import('@/views/Home'))
 const Explore = lazy(() => import('@/views/Explore'))
 const Search = lazy(() => import('@/views/Search'))
+const PlayList = lazy(() => import('@/views/Detail/PlayList'))
+const Song = lazy(() => import('@/views/Detail/Song'))
+const Artists = lazy(() => import('@/views/Detail/Artists'))
 const NotFound = lazy(() => import('@/views/NotFound'))
 
 const routes = [
@@ -42,6 +45,30 @@ const routes = [
         element: (
           <Suspense>
             <Search />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'playList/:id',
+        element: (
+          <Suspense>
+            <PlayList />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'song/:id',
+        element: (
+          <Suspense>
+            <Song />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'artists/:id',
+        element: (
+          <Suspense>
+            <Artists />
           </Suspense>
         ),
       },

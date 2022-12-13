@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 // import { UserContext } from '@/layout'
 import playListApi from '@/service/playList'
+import { artistsShow, timestampToTime } from '@/utils'
 import type * as T from '@/types'
 import type * as playListType from '@/service/playList/types'
 
@@ -10,7 +11,50 @@ const usePlayList = (needInit = false) => {
   const [recommendPlayList, setRecommendPlayList] = useState<T.IPlayList[]>()
   const [todayRecommendPlayList, setTodayRecommendPlayList] = useState<T.IPlayList[]>()
 
-  // const getPlayListDetail = (id: string) => {}
+  const getPlayListDetail = (id: string) => {
+    return new Promise(resolve => {
+      playListApi
+        .getPlayListDetail({
+          id,
+        })
+        .then(res => {
+          const result: T.IPlayListDetail = {}
+          result.id = res.playlist.id
+          result.playListName = res.playlist.name
+          result.tags = res.playlist.tags
+          result.picUrl = res.playlist.coverImgUrl
+          result.playListDesc = res.playlist.description
+          result.playCount = res.playlist.playCount
+          result.createTime = timestampToTime(res.playlist.createTime)
+          result.updateTime = timestampToTime(res.playlist.updateTime)
+          result.creatorObj = {
+            nickName: res.playlist.creator.nickname,
+            id: res.playlist.creator.id,
+          }
+          result.songNum = res.playlist.trackIds.length
+          result.subscribed = res.playlist.subscribed
+          result.allSongIds = res.playlist.trackIds.map((i: { id: number }) => i.id + '')
+          resolve(result)
+        })
+    })
+  }
+  const getAllSongByPlayList = (param: playListType.IAllSongByPlayList) => {
+    return new Promise(resolve => {
+      playListApi.getAllSongByPlayList(param).then(res => {
+        const data: T.IPlayList[] = res.songs?.map((i: any) => ({
+          songName: i.name,
+          songAlias: i.alia && i.alia[0],
+          id: i.id,
+          albumName: i.al && i.al.name,
+          picUrl: i.al && i.al.picUrl,
+          albumId: i.al && i.al.id,
+          songArtists: artistsShow(i.ar),
+          fee: i.fee,
+        }))
+        resolve(data)
+      })
+    })
+  }
   // 获取推荐歌单
   const getRecommendPlayList = (limit: number | undefined = 5) => {
     playListApi
@@ -90,6 +134,8 @@ const usePlayList = (needInit = false) => {
     todayRecommendPlayList,
     getPlayListCategory,
     getPlayListByCategory,
+    getPlayListDetail,
+    getAllSongByPlayList,
   }
 }
 

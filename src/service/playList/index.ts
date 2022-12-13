@@ -25,9 +25,22 @@ export const getPlayListByCategory = (params: T.IPlayListCategory) => {
   })
 }
 
+export const getPlayListDetail = (params: T.IPlayListDetail) => {
+  return service.post('/playlist/detail', params, {
+    needLoadingBar: true,
+  })
+}
+export const getAllSongByPlayList = (params: T.IAllSongByPlayList) => {
+  return service.post('/playlist/track/all', params, {
+    needLoadingBar: true,
+  })
+}
+
 export default {
   getRecommendPlayList,
   getTodayRecommendPlayList,
   getPlayListCategory,
   getPlayListByCategory,
+  getPlayListDetail,
+  getAllSongByPlayList,
 }

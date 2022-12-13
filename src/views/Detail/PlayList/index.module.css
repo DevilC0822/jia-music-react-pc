@@ -1,0 +1,45 @@
+.headerBox {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+.headerImg {
+  width: 300px;
+  height: 300px;
+  border-radius: 8px;
+}
+
+.name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.tagBox {
+  margin-top: 20px;
+}
+
+.timeBox {
+  margin-top: 20px;
+}
+.timeBox :global(.semi-button-disabled) {
+  cursor: default;
+  background-color: #fcdde8;
+}
+.timeBox :global(.semi-button-disabled:not(.semi-button-borderless):not(.semi-button-light):hover) {
+  background-color: #fcdde8;
+}
+
+.desc {
+  margin-top: 20px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.operateBox {
+  margin-top: 20px;
+}
