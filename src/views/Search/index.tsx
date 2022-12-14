@@ -82,8 +82,6 @@ function Search() {
           result.fee = item.fee
           handleSongList.push(result)
         })
-        console.log(songList)
-        console.log(handleSongList)
         setSongList(() => {
           if (songList.length !== 0) {
             return [...songList, ...handleSongList].reduce((tempArr: T.ISong[], item) => {

@@ -9,7 +9,7 @@ import type * as T from '@/types'
 function Home() {
   const { recommendPlayList, todayRecommendPlayList } = usePlayList(true)
   const { recommendNewSong, todayRecommendSong } = useSong(true)
-  const { topArtists } = useArtists()
+  const { topArtists } = useArtists(true)
 
   return (
     <>

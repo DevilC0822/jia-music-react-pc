@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Tag, Button } from '@douyinfe/semi-ui'
+import { Tag, Button, Tooltip } from '@douyinfe/semi-ui'
 import { IconTickCircle, IconSync, IconLikeHeart } from '@douyinfe/semi-icons'
 import CustomShowList from '@/components/CustomShowList'
 import PlayCount from '@/components/PlayCount'
@@ -85,19 +85,24 @@ function PlayList() {
             </div>
             <p style={{ marginTop: 20, fontSize: 14 }}>由 {playListInfo?.creatorObj?.nickName} 创建</p>
             <div className={styles.timeBox}>
-              <Button disabled icon={<IconTickCircle />} theme="solid" style={{ marginRight: 10 }}>
-                {playListInfo.createTime}
-              </Button>
-              <Button disabled icon={<IconSync />} theme="solid" style={{ marginRight: 10 }}>
-                {playListInfo.updateTime}
-              </Button>
+              <Tooltip content={'歌单创建时间'}>
+                <Button disabled icon={<IconTickCircle />} theme="solid" style={{ marginRight: 10 }}>
+                  {playListInfo.createTime}
+                </Button>
+              </Tooltip>
+              <Tooltip content={'歌单最后更新时间'}>
+                <Button disabled icon={<IconSync />} theme="solid" style={{ marginRight: 10 }}>
+                  {playListInfo.updateTime}
+                </Button>
+              </Tooltip>
             </div>
             <p className={styles.desc}>{playListInfo.playListDesc}</p>
             <div className={styles.operateBox}>
-              <Button theme="solid" style={{ marginRight: 10 }}>
+              <Button disabled theme="solid" style={{ marginRight: 10 }}>
                 播放
               </Button>
               <Button
+                disabled
                 icon={<IconLikeHeart style={{ color: `${playListInfo.subscribed ? '#e91e63' : '#fff'}` }} />}
                 theme="solid"
                 style={{ marginRight: 10 }}

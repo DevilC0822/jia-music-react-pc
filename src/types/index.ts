@@ -17,6 +17,14 @@ export interface IArtists {
   picUrl?: string
 }
 
+export interface IArtistsDetail extends IArtists {
+  artistsDesc?: string
+  tags?: String[]
+  musicSize?: string
+  mvSize?: string
+  rank?: number
+}
+
 export interface IPlayList {
   [propsName: string]: any
   id?: string
