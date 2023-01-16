@@ -15,6 +15,7 @@ import {
 } from '@douyinfe/semi-icons'
 import HeaderSearch from '@/components/HeaderSearch'
 import LoginModal from '@/components/LoginModal'
+import Player from '@/components/Player'
 import styles from './index.module.css'
 
 export const UserContext = React.createContext({
@@ -23,8 +24,10 @@ export const UserContext = React.createContext({
 
 const MainLayout = () => {
   const navigate = useNavigate()
-  const { Header, Content } = Layout
+  const { Header, Content, Footer } = Layout
   const { loginStatus, updateLoginStatus, logout } = useLogin()
+  const [playingSongId, setPlayingSongId] = useState(JSON.parse(window.localStorage.getItem('playingSongId')! ?? '0'))
+  const [playQueue, setPlayQueue] = useState(JSON.parse(window.localStorage.getItem('playQueue')! ?? '[]'))
   const [loginModalVisible, setLoginModalVisible] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState([window.location.pathname.substring(1)])
 
@@ -52,6 +55,12 @@ const MainLayout = () => {
   //     setThemeName('dark')
   //   }
   // }
+
+  useEffect(() => {
+    console.log(window.localStorage.getItem('playQueue'))
+    setPlayingSongId(JSON.parse(window.localStorage.getItem('playingSongId')! ?? '0'))
+    setPlayQueue(JSON.parse(window.localStorage.getItem('playQueue')! ?? '[]'))
+  }, [playingSongId])
 
   return (
     <Layout>
@@ -181,29 +190,9 @@ const MainLayout = () => {
           <Outlet />
         </UserContext.Provider>
       </Content>
-      {/*<Footer*/}
-      {/*  style={{*/}
-      {/*    display: 'flex',*/}
-      {/*    justifyContent: 'space-between',*/}
-      {/*    padding: '20px',*/}
-      {/*    color: 'var(--semi-color-text-2)',*/}
-      {/*    backgroundColor: 'rgba(var(--semi-grey-0), 1)',*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <span*/}
-      {/*    style={{*/}
-      {/*      display: 'flex',*/}
-      {/*      alignItems: 'center',*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    <IconBytedanceLogo size="large" style={{ marginRight: '8px' }} />*/}
-      {/*    <span>Copyright © 2019 ByteDance. All Rights Reserved. </span>*/}
-      {/*  </span>*/}
-      {/*  <span>*/}
-      {/*    <span style={{ marginRight: '24px' }}>平台客服</span>*/}
-      {/*    <span>反馈建议</span>*/}
-      {/*  </span>*/}
-      {/*</Footer>*/}
+      <Footer className={styles.Footer}>
+        <Player id={playingSongId} playQueue={playQueue}></Player>
+      </Footer>
       <LoginModal
         loginModalVisible={loginModalVisible}
         setLoginModalVisible={setLoginModalVisible}

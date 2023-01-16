@@ -16,7 +16,11 @@ function Home(props: IProps) {
   const navigate = useNavigate()
 
   const jumpPage = (id: string) => {
-    navigate(`/${type}/${id}`)
+    if (type === 'song') {
+      navigate(`/${type}/${id}`, { state: { songList: dataSource } })
+    } else {
+      navigate(`/${type}/${id}`)
+    }
   }
   return (
     <>

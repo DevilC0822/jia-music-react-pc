@@ -18,6 +18,14 @@
 .MainContent {
   box-sizing: border-box;
   height: calc(100vh);
-  padding: 60px 10vw 40px;
+  padding: 60px 10vw 86px;
   overflow: auto;
+}
+
+.Footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  backdrop-filter: saturate(180%) blur(30px);
+  background-color: hsla(0, 0%, 100%, 0.86);
 }

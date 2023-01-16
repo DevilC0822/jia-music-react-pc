@@ -1,0 +1,63 @@
+.PlayerBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10vw 10px;
+}
+.PlayerBox :global(.semi-icon) {
+  cursor: pointer;
+}
+.operateLeft {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 150px;
+}
+.operateRight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+}
+.playingPercent {
+  position: relative;
+  top: -17px;
+}
+.playingPercent :global(.semi-slider) {
+  padding: 0;
+}
+.playingPercent :global(.semi-slider-wrapper) {
+  height: 20px;
+}
+.playingPercent :global(.semi-slider-track) {
+  background: #0095ee;
+  height: 2px;
+}
+.playingPercent :global(.semi-slider-rail) {
+  background-color: #e8e8e8;
+  height: 2px;
+}
+
+.playingPercent :global(.semi-slider-handle) {
+  visibility: hidden;
+  width: 16px;
+  height: 16px;
+  margin-top: 6px;
+}
+.playingPercent:hover :global(.semi-slider-handle) {
+  visibility: initial;
+}
+
+.volumeBox {
+  width: 200px;
+}
+
+.volumeBox :global(.semi-slider-track) {
+  background: #2c2d2e;
+}
+
+.volumeBox :global(.semi-slider-handle) {
+  width: 16px;
+  height: 16px;
+  margin-top: 7px;
+}

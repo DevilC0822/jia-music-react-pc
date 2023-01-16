@@ -16,8 +16,20 @@ export const getTodayRecommendSong = () => {
   return service.post('/recommend/songs')
 }
 
+// 获取喜欢的音乐列表
+export const getLikeSongList = (params: { uid: string }) => {
+  return service.post('/likelist')
+}
+
+// 获取喜欢的音乐列表
+export const likeSong = (params: { id: string; like?: boolean }) => {
+  return service.post('/like')
+}
+
 export default {
   getSongDetail,
   getRecommendNewSong,
   getTodayRecommendSong,
+  getLikeSongList,
+  likeSong,
 }

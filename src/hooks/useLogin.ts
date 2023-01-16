@@ -1,20 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import loginApi from '@/service/login'
+import songApi from '@/service/song'
 import md5 from 'blueimp-md5'
 
 const useLogin = () => {
   const [loginStatus, setLoginStatus] = useState(false)
+
+  const getLikeSongList = (uid: string) => {
+    return new Promise(resolve => {
+      songApi.getLikeSongList({ uid }).then(res => {
+        resolve(res.ids)
+      })
+    })
+  }
+
   // 更新登录状态
   // 暂时使用localStorage 暂存 因react-activation 库的现存bug
   const updateLoginStatus = () => {
-    loginApi.getLoginStatus().then(res => {
+    loginApi.getLoginStatus().then(async res => {
       if (res.data.profile) {
+        const likeSongIds = await getLikeSongList(res.data.profile.userId)
         window.localStorage.setItem('loginStatus', 'true')
         window.localStorage.setItem('profile', JSON.stringify(res.data.profile))
+        window.localStorage.setItem('likeSongIds', JSON.stringify(likeSongIds))
         setLoginStatus(true)
       } else {
         window.localStorage.setItem('loginStatus', 'false')
         window.localStorage.removeItem('profile')
+        window.localStorage.removeItem('likeSongIds')
         setLoginStatus(false)
       }
     })

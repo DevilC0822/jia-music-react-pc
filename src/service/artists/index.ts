@@ -18,7 +18,9 @@ export const getSimiArtists = (params: { id: string }) => {
 
 // 获取歌手全部歌曲
 export const getArtistsAllSong = (params: T.IArtistsAllSong) => {
-  return service.post('/artist/songs', params)
+  return service.post('/artist/songs', params, {
+    needLoadingBar: true,
+  })
 }
 
 export default {
