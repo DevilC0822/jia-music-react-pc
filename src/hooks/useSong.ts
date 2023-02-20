@@ -12,6 +12,10 @@ const useSong = (needInit = false) => {
   const [todayRecommendSong, setTodayRecommendSong] = useState<T.ISong[]>()
   // 获取歌曲详细信息
   const getSongDetail = (ids: string) => {
+    if (Number(ids) === 0) {
+      return
+    }
+    console.log(typeof ids)
     return new Promise(resolve => {
       songApi
         .getSongDetail({
