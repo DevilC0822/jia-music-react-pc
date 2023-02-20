@@ -57,6 +57,9 @@ const MainLayout = () => {
   // }
 
   useEffect(() => {
+    if (!playingSongId) {
+      return
+    }
     console.log(window.localStorage.getItem('playQueue'))
     setPlayingSongId(JSON.parse(window.localStorage.getItem('playingSongId')! ?? '0'))
     setPlayQueue(JSON.parse(window.localStorage.getItem('playQueue')! ?? '[]'))
@@ -191,7 +194,7 @@ const MainLayout = () => {
         </UserContext.Provider>
       </Content>
       <Footer className={styles.Footer}>
-        <Player id={playingSongId} playQueue={playQueue}></Player>
+        {playingSongId && <Player id={playingSongId} playQueue={playQueue}></Player>}
       </Footer>
       <LoginModal
         loginModalVisible={loginModalVisible}
