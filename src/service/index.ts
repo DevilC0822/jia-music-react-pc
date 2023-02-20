@@ -17,6 +17,7 @@ axios.interceptors.request.use(
     config.params = {
       // realIP: '116.25.146.177',
       timerstamp: Date.parse(new Date().toString()) / 1000,
+      realIP: '116.25.146.177',
       ...config.params,
     }
     return config
