@@ -22,6 +22,18 @@ const useSong = (needInit = false) => {
         })
     })
   }
+  const getSongUrl = (id: string, level = 'standard') => {
+    return new Promise(resolve => {
+      songApi
+        .getSongUrl({
+          id,
+          level,
+        })
+        .then(res => {
+          resolve(res)
+        })
+    })
+  }
 
   const getRecommendNewSong = (limit: number | undefined = 5) => {
     songApi
@@ -76,6 +88,7 @@ const useSong = (needInit = false) => {
     recommendNewSong,
     todayRecommendSong,
     getSongDetail,
+    getSongUrl,
   }
 }
 

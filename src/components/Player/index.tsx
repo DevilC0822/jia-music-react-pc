@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Slider, Button, Tooltip, Popover } from '@douyinfe/semi-ui'
 import {
   IconHeartStroked,
@@ -14,14 +14,12 @@ import {
   IconSync,
 } from '@douyinfe/semi-icons'
 import { formatTime } from '@/utils'
-import songApi from '@/service/song'
+import useSong from '@/hooks/useSong'
 import styles from './index.module.css'
 import { ISong } from '@/types'
 
-const playingStatus = false
-
 interface IProps {
-  id: number
+  id: string
   playQueue: ISong[]
 }
 
@@ -29,35 +27,65 @@ function Player(props: IProps) {
   const { id, playQueue } = props
   const [currentPlayingTime, setCurrentPlayingTime] = useState(10)
   const [volume, setVolume] = useState(50)
+  const [playingStatus, setPlayingStatus] = useState(false)
   const [playMode, setPlayMode] = useState<'listLoop' | 'singleLoop'>('listLoop')
   const [playingInfo, setPlayingInfo] = useState({
-    songDuration: 200,
+    songDuration: 1000,
     songName: '海阔天空',
     isMyLike: true,
+    songUrl: '',
+    totalTime: '',
   })
+  const myAudio = useRef<HTMLAudioElement>(null)
+  const { getSongDetail, getSongUrl } = useSong()
 
-  const init = () => {
+  const init = async () => {
+    const songDetail: any = await getSongDetail(id)
+    const songUrl: any = await getSongUrl(id)
     setPlayingInfo({
       ...playingInfo,
-      isMyLike: (JSON.parse(window.localStorage.getItem('likeSongIds')!) ?? []).find((i: number) => i === id),
-    })
-    songApi.getSongDetail({ ids: String(id) }).then(res => {
-      console.log(res)
+      isMyLike: (JSON.parse(window.localStorage.getItem('likeSongIds')!) ?? []).find((i: number) => i === Number(id)),
+      songName: songDetail.songs[0].al.name,
+      songUrl: songUrl.data[0].url,
+      songDuration: Math.ceil(songUrl.data[0].time / 1000),
+      totalTime: `${parseInt(String(songUrl.data[0].time / 1000))}:${Math.ceil((songUrl.data[0].time / 1000) % 60)}`,
     })
   }
 
+  const audioPlay = () => {
+    myAudio.current!.play()
+    setPlayingStatus(!myAudio.current!.paused)
+  }
+  const audioPaused = () => {
+    myAudio.current!.pause()
+    setPlayingStatus(!myAudio.current!.paused)
+  }
+
+  const audioCanPlay = () => {
+    setCurrentPlayingTime(myAudio.current!.currentTime)
+  }
+  const audioTimeUpdate = () => {
+    setCurrentPlayingTime(myAudio.current!.currentTime)
+  }
+
   useEffect(() => {
-    init()
+    init().then()
   }, [id])
+
+  useEffect(() => {
+    console.log(myAudio.current)
+  }, [])
   return (
     <>
       <div className={styles.playingPercent}>
         <Slider
           value={currentPlayingTime}
           onChange={value => {
+            myAudio.current!.currentTime = value as number
             setCurrentPlayingTime(value as number)
           }}
           max={playingInfo.songDuration}
+          showBoundary
           tipFormatter={v => formatTime(v as number)}
         />
       </div>
@@ -77,10 +105,20 @@ function Player(props: IProps) {
         <div className={styles.operateLeft}>
           <Button theme="borderless" type="tertiary" icon={<IconBackward style={{ fontSize: 24 }} />}></Button>
           {!playingStatus && (
-            <Button theme="borderless" type="tertiary" icon={<IconPlay style={{ fontSize: 32 }} />}></Button>
+            <Button
+              onClick={audioPlay}
+              theme="borderless"
+              type="tertiary"
+              icon={<IconPlay style={{ fontSize: 32 }} />}
+            ></Button>
           )}
           {playingStatus && (
-            <Button theme="borderless" type="tertiary" icon={<IconPause style={{ fontSize: 32 }} />}></Button>
+            <Button
+              onClick={audioPaused}
+              theme="borderless"
+              type="tertiary"
+              icon={<IconPause style={{ fontSize: 32 }} />}
+            ></Button>
           )}
           <Button theme="borderless" type="tertiary" icon={<IconFastForward style={{ fontSize: 24 }} />}></Button>
         </div>
@@ -146,6 +184,13 @@ function Player(props: IProps) {
           </div>
         </div>
       </div>
+      <audio
+        ref={myAudio}
+        onCanPlay={audioCanPlay}
+        onTimeUpdate={audioTimeUpdate}
+        controls
+        src={playingInfo.songUrl}
+      ></audio>
     </>
   )
 }

@@ -1,9 +1,12 @@
 import service from '@/service'
-// import type * as T from './types'
+import type * as T from './types'
 
 // 获取歌曲详情
 export const getSongDetail = (params: { ids: string }) => {
   return service.post('/song/detail', params)
+}
+export const getSongUrl = (params: T.IGetSongUrl) => {
+  return service.post('/song/url/v1', params)
 }
 
 // 获取推荐歌曲
@@ -28,6 +31,7 @@ export const likeSong = (params: { id: string; like?: boolean }) => {
 
 export default {
   getSongDetail,
+  getSongUrl,
   getRecommendNewSong,
   getTodayRecommendSong,
   getLikeSongList,
