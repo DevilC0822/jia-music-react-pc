@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import searchApi from '@/service/search'
 import { List, Avatar, Toast, Tag, Button } from '@douyinfe/semi-ui'
 import { artistsShow } from '@/utils'
@@ -10,6 +10,7 @@ import { UserContext } from '@/layout'
 function Search() {
   const { loginStatus } = useContext(UserContext)
   const params = useParams()
+  const navigate = useNavigate()
   const [songList, setSongList] = useState<T.ISong[]>([])
   const [loading, setLading] = useState(false)
   const [hasMore, setHasMore] = useState(false)
@@ -98,6 +99,10 @@ function Search() {
       })
   }
 
+  const jumpSongPage = (id: string) => {
+    navigate(`/song/${id}`, { state: { songList: [] } })
+  }
+
   const loadMore = () => {
     setSearchParams({
       ...searchParams,
@@ -125,6 +130,9 @@ function Search() {
         renderItem={item => (
           <List.Item
             key={item.songId}
+            onClick={() => {
+              jumpSongPage(item.songId)
+            }}
             header={
               <Avatar shape="square" src={`${item.picUrl}?param=50y50`}>
                 SE

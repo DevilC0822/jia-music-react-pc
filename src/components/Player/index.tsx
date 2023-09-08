@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Slider, Button, Tooltip, Popover } from '@douyinfe/semi-ui'
+import { Slider, Button, Tooltip, Popover, Toast } from '@douyinfe/semi-ui'
 import {
   IconHeartStroked,
   IconLikeHeart,
@@ -25,12 +25,12 @@ interface IProps {
 
 function Player(props: IProps) {
   const { id, playQueue } = props
-  const [currentPlayingTime, setCurrentPlayingTime] = useState(10)
+  const [currentPlayingTime, setCurrentPlayingTime] = useState(0)
   const [volume, setVolume] = useState(50)
   const [playingStatus, setPlayingStatus] = useState(false)
   const [playMode, setPlayMode] = useState<'listLoop' | 'singleLoop'>('listLoop')
   const [playingInfo, setPlayingInfo] = useState({
-    songDuration: 1000,
+    songDuration: 0,
     songName: '海阔天空',
     isMyLike: true,
     songUrl: '',
@@ -39,22 +39,15 @@ function Player(props: IProps) {
   const myAudio = useRef<HTMLAudioElement>(null)
   const { getSongDetail, getSongUrl } = useSong()
 
-  const init = async () => {
-    const songDetail: any = await getSongDetail(id)
-    const songUrl: any = await getSongUrl(id)
-    setPlayingInfo({
-      ...playingInfo,
-      isMyLike: (JSON.parse(window.localStorage.getItem('likeSongIds')!) ?? []).find((i: number) => i === Number(id)),
-      songName: songDetail.songs[0].al.name,
-      songUrl: songUrl.data[0].url,
-      songDuration: Math.ceil(songUrl.data[0].time / 1000),
-      totalTime: `${parseInt(String(songUrl.data[0].time / 1000))}:${Math.ceil((songUrl.data[0].time / 1000) % 60)}`,
-    })
-  }
-
   const audioPlay = () => {
-    myAudio.current!.play()
-    setPlayingStatus(!myAudio.current!.paused)
+    myAudio
+      .current!.play()
+      .then(res => {
+        setPlayingStatus(!myAudio.current!.paused)
+      })
+      .catch(err => {
+        // Toast.error('播放失败' + err.message)
+      })
   }
   const audioPaused = () => {
     myAudio.current!.pause()
@@ -67,6 +60,27 @@ function Player(props: IProps) {
   const audioTimeUpdate = () => {
     setCurrentPlayingTime(myAudio.current!.currentTime)
   }
+
+  const init = async () => {
+    setPlayingStatus(false)
+    const songDetail: any = await getSongDetail(id)
+    const songUrl: any = await getSongUrl(id)
+    setPlayingInfo({
+      ...playingInfo,
+      isMyLike: (JSON.parse(window.localStorage.getItem('likeSongIds')!) ?? []).find((i: number) => i === Number(id)),
+      songName: songDetail.songs[0].al.name,
+      songUrl: songUrl.data[0].url,
+      songDuration: Math.ceil(songUrl.data[0].time / 1000),
+      totalTime: `${parseInt(String(songUrl.data[0].time / 1000))}:${Math.ceil((songUrl.data[0].time / 1000) % 60)}`,
+    })
+    setTimeout(() => {
+      audioPlay()
+    }, 50)
+  }
+
+  useEffect(() => {
+    myAudio.current!.volume = volume / 100
+  }, [volume])
 
   useEffect(() => {
     init().then()
@@ -84,8 +98,9 @@ function Player(props: IProps) {
             myAudio.current!.currentTime = value as number
             setCurrentPlayingTime(value as number)
           }}
+          key={playingInfo.songDuration}
           max={playingInfo.songDuration}
-          showBoundary
+          // showBoundary
           tipFormatter={v => formatTime(v as number)}
         />
       </div>
@@ -127,7 +142,7 @@ function Player(props: IProps) {
             content={
               playQueue.length > 0 && (
                 <div style={{ padding: 10 }}>
-                  {playQueue.map(i => (
+                  {playQueue?.map(i => (
                     <p key={i.id}>{i.songName}</p>
                   ))}
                 </div>
@@ -185,6 +200,7 @@ function Player(props: IProps) {
         </div>
       </div>
       <audio
+        style={{ display: 'none' }}
         ref={myAudio}
         onCanPlay={audioCanPlay}
         onTimeUpdate={audioTimeUpdate}

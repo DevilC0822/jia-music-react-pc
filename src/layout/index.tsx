@@ -57,13 +57,13 @@ const MainLayout = () => {
   // }
 
   useEffect(() => {
-    if (!playingSongId) {
+    console.log(window.location.pathname)
+    if (window.location.pathname?.split('/')?.[1] !== 'song') {
       return
     }
-    console.log(window.localStorage.getItem('playQueue'))
-    setPlayingSongId(JSON.parse(window.localStorage.getItem('playingSongId')! ?? '0'))
+    setPlayingSongId(window.location.pathname?.split('/')?.[2])
     setPlayQueue(JSON.parse(window.localStorage.getItem('playQueue')! ?? '[]'))
-  }, [playingSongId])
+  }, [window.location.pathname?.split('/')?.[2]])
 
   return (
     <Layout>
